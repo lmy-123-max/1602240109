@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "门店信息",
+  "usingComponents": {
+    "login-panel": "../../components/login-panel/login-panel"
+  }
+}

@@ -1,0 +1,25 @@
+/* packageAdmin/doctors/doctors.wxss */
+.d-store-name { font-size: 29rpx; font-weight: 700; }
+.d-store-addr { font-size: 22rpx; color: var(--muted); margin-top: 6rpx; }
+.d-doc {
+  display: flex; align-items: flex-start;
+  padding: 20rpx 0; border-top: 1rpx solid var(--line);
+  margin-top: 20rpx;
+}
+.d-doc:first-of-type { border-top: none; margin-top: 10rpx; }
+.d-avatar {
+  width: 76rpx; height: 76rpx; border-radius: 50%;
+  background: var(--brand-light); color: var(--brand);
+  font-size: 30rpx; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex: 0 0 76rpx;
+}
+.d-main { flex: 1; min-width: 0; margin-left: 20rpx; }
+.d-line1 { display: flex; align-items: center; gap: 12rpx; }
+.d-name { font-size: 28rpx; font-weight: 600; }
+.d-title { font-size: 22rpx; color: var(--brand); }
+.d-rating { margin-left: auto; font-size: 23rpx; color: var(--warn); }
+.d-spec { font-size: 24rpx; color: var(--text); margin-top: 8rpx; }
+.d-intro { font-size: 22rpx; color: var(--muted); margin-top: 6rpx; line-height: 1.6; }
+.d-empty { font-size: 24rpx; color: var(--muted); padding: 16rpx 0; text-align: center; }
+.retry { margin-top: 20rpx; }

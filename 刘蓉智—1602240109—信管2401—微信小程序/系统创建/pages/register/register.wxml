@@ -1,0 +1,115 @@
+<!--pages/register/register.wxml-->
+<block wx:if="{{authState === 'checking'}}">
+  <view class="loading-tip">登录状态检查中...</view>
+</block>
+
+<block wx:elif="{{authState === 'signed-out'}}">
+  <view class="reg-hero">
+    <view class="reg-hero-title">注册 / 入驻</view>
+    <view class="reg-hero-sub">请先登录，再注册就诊人或申请牙医入驻</view>
+  </view>
+  <view class="card">
+    <login-panel bind:signedin="onSignedIn" />
+  </view>
+</block>
+
+<block wx:else>
+  <!-- 身份切换：患者注册 / 牙医入驻，两类身份自助开通 -->
+  <view class="reg-tabs">
+    <view class="reg-tab {{tab === 'patient' ? 'on' : ''}}" data-tab="patient" bindtap="onTab">
+      🧑‍💼 患者注册
+    </view>
+    <view class="reg-tab {{tab === 'doctor' ? 'on' : ''}}" data-tab="doctor" bindtap="onTab">
+      🦷 牙医入驻
+    </view>
+  </view>
+
+  <!-- 患者注册 -->
+  <block wx:if="{{tab === 'patient'}}">
+    <view class="reg-desc">注册即自动建立就诊人档案并生成健康卡号，历史预约与病历按账号归属，永不丢失。</view>
+    <block wx:if="{{patient}}">
+      <view class="card reg-done">
+        <view class="reg-done-row"><text class="reg-done-k">姓名</text><text class="reg-done-v">{{patient.name}}</text></view>
+        <view class="reg-done-row"><text class="reg-done-k">手机</text><text class="reg-done-v">{{patient.phone || '未填写'}}</text></view>
+        <view class="reg-done-row"><text class="reg-done-k">健康卡号</text><text class="reg-done-v reg-hc">{{patient.healthCardNo}}</text></view>
+        <view class="reg-tip">✅ 您已完成注册，下方可更新姓名与手机号</view>
+      </view>
+    </block>
+    <view class="card form-card">
+      <view class="f-item">
+        <view class="f-label">姓名 <text class="f-req">*</text></view>
+        <input class="f-input" placeholder="请输入真实姓名" value="{{name}}" bindinput="onName" />
+      </view>
+      <view class="f-item f-row">
+        <view class="f-grow">
+          <view class="f-label">手机号</view>
+          <input class="f-input" placeholder="用于就诊通知" type="number" value="{{phone}}" bindinput="onPhone" />
+        </view>
+        <button class="btn-primary f-publish" bindtap="onPatientRegister" disabled="{{submitting}}">
+          {{submitting ? '提交中…' : (patient ? '更新档案' : '立即注册')}}
+        </button>
+      </view>
+    </view>
+    <view class="footer-tip">患者无需绑定工号，登录即享预约挂号、缴费、病历服务</view>
+  </block>
+  <block wx:if="{{tab === 'doctor'}}">
+    <view class="reg-desc">入驻后自动创建医生执业档案并分配工号（D 起始），绑定当前账号即可进入医生工作台接诊。</view>
+    <view class="card form-card">
+      <view class="f-item">
+        <view class="f-label">姓名 <text class="f-req">*</text></view>
+        <input class="f-input" placeholder="请输入真实姓名" value="{{dName}}" bindinput="onDName" />
+      </view>
+      <view class="f-item f-row">
+        <view class="f-grow">
+          <view class="f-label">职称</view>
+          <picker range="{{titles}}" value="{{titleIndex}}" bindchange="onTitle">
+            <view class="f-tag">{{titles[titleIndex]}} ▾</view>
+          </picker>
+        </view>
+        <view class="f-grow">
+          <view class="f-label">执业年限（选填）</view>
+          <input class="f-input" placeholder="如 8" type="number" value="{{years}}" bindinput="onYears" />
+        </view>
+      </view>
+      <view class="f-item">
+        <view class="f-label">执业特长</view>
+        <input class="f-input" placeholder="如 种植 / 正畸 / 全科" value="{{specialty}}" bindinput="onSpecialty" />
+      </view>
+      <view class="f-item">
+        <view class="f-label">归属门店 <text class="f-req">*</text></view>
+        <picker range="{{stores}}" range-key="name" value="{{storeIndex}}" bindchange="onStore">
+          <view class="f-tag">{{storeIndex >= 0 ? stores[storeIndex].name : '请选择门店 ▾'}}</view>
+        </picker>
+      </view>
+      <button class="btn-primary reg-submit" bindtap="onDoctorRegister" disabled="{{submitting}}">
+        {{submitting ? '提交中…' : '提交入驻申请'}}
+      </button>
+      <view class="reg-tip">入驻即视为同意执业规范；工号自动分配（D1xx），初始提成比例 10%，资质可在医生工作台补录。</view>
+    </view>
+    <view class="footer-tip">已有工号？在「我的」页直接绑定即可，无需重复入驻</view>
+  </block>
+
+  <!-- 合规：个人信息处理告知书（两类注册通用，必勾） -->
+  <view class="card consent-card">
+    <view class="consent-row" bindtap="onConsent">
+      <view class="checkbox {{consent ? 'on' : ''}}">{{consent ? '✓' : ''}}</view>
+      <view class="consent-text">我已阅读并同意<text class="consent-link" catchtap="openConsent">《个人信息处理告知书》</text>，同意门诊依法收集、存储和使用我的个人信息用于就诊服务。</view>
+    </view>
+  </view>
+</block>
+
+<!-- 告知书全文弹层 -->
+<view class="mask" wx:if="{{showConsent}}" catchtap="closeConsent">
+  <view class="sheet" catchtap="">
+    <view class="sheet-title">个人信息处理告知书</view>
+    <scroll-view scroll-y class="sheet-body">
+      <view class="sheet-p">依据《中华人民共和国个人信息保护法》《医疗机构病历管理规定》，牙科门诊向您告知如下：</view>
+      <view class="sheet-p">1. 处理目的与方式：为提供预约挂号、就诊、收费、医保结算及病历管理服务，本门诊将收集您的姓名、联系电话、健康卡号、就诊记录与费用记录。</view>
+      <view class="sheet-p">2. 保存期限：您的病历资料自最后一次就诊之日起依法保存；个人标识信息在您注销账户后立即匿名化处理。</view>
+      <view class="sheet-p">3. 医保结算：符合医保规定的甲类、乙类诊疗项目将按规定比例由医保统筹基金报销，报销明细在账单中逐笔列示。</view>
+      <view class="sheet-p">4. 您的权利：您有权查阅、复制、更正您的个人信息，也可随时注销账户；注销后历史病历将依规匿名留存。</view>
+      <view class="sheet-p">5. 安全保障：本系统对个人信息实行分类分级管理，工作人员操作全程留痕，患者数据仅本人可读写。</view>
+    </scroll-view>
+    <button class="btn-primary sheet-btn" bindtap="closeConsent">我已知晓</button>
+  </view>
+</view>

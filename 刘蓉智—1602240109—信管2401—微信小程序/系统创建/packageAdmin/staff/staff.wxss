@@ -1,0 +1,49 @@
+/* packageAdmin/staff/staff.wxss */
+.form-card { padding: 26rpx 28rpx; }
+.st-submit {
+  margin-top: 6rpx;
+  border-radius: 40rpx;
+  line-height: 84rpx;
+  font-size: 28rpx;
+}
+.st-tip {
+  font-size: 23rpx;
+  color: var(--muted);
+  margin-top: 18rpx;
+  line-height: 1.8;
+}
+
+.s-card { padding: 24rpx 28rpx; }
+.s-line1 { display: flex; align-items: center; }
+.s-badge {
+  width: 72rpx; height: 72rpx;
+  border-radius: 20rpx;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34rpx;
+}
+.s-badge.doctor { background: #e8f2ff; }
+.s-badge.store_admin { background: #fff3e5; }
+.s-badge.hq_admin { background: #efeaff; }
+.s-main { flex: 1; margin-left: 20rpx; min-width: 0; }
+.s-name { font-size: 28rpx; font-weight: 600; }
+.s-code { font-size: 22rpx; color: var(--muted); margin-top: 6rpx; }
+.s-tag {
+  font-size: 22rpx;
+  padding: 6rpx 18rpx;
+  border-radius: 24rpx;
+}
+.s-hq { background: #efeaff; color: #6f4be0; }
+.s-store { background: #fff3e5; color: #d97a1f; }
+.s-foot {
+  display: flex; align-items: center;
+  margin-top: 16rpx;
+}
+.s-off {
+  margin-left: auto;
+  font-size: 24rpx;
+  padding: 8rpx 24rpx;
+  border-radius: 26rpx;
+  color: var(--danger);
+  border: 1rpx solid #f3d3d0;
+}
+.retry { margin-top: 20rpx; }

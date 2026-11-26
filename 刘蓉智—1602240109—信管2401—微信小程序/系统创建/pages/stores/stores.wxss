@@ -1,0 +1,15 @@
+/* pages/stores/stores.wxss */
+.s-card { padding: 28rpx; }
+.s-line1 { display: flex; align-items: center; }
+.s-name { font-size: 30rpx; font-weight: 700; }
+.s-line1 .tag { margin-left: auto; }
+.s-code { font-size: 22rpx; color: var(--muted); margin-top: 6rpx; letter-spacing: 1rpx; }
+.s-line { font-size: 26rpx; color: var(--text); margin-top: 14rpx; line-height: 1.6; }
+.s-ops { display: flex; gap: 18rpx; margin-top: 22rpx; }
+.s-btn {
+  font-size: 25rpx; border-radius: 30rpx;
+  padding: 12rpx 30rpx; line-height: 1.4;
+}
+.s-call { background: var(--brand-light); color: var(--brand); }
+.s-map { background: var(--mint-light); color: var(--mint); }
+.retry { margin-top: 20rpx; }

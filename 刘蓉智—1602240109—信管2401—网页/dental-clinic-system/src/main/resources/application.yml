@@ -1,0 +1,91 @@
+spring:
+  profiles:
+    active: h2   # 默认 H2 文件库，开箱即用且数据永久保存；切换 MySQL 见 README
+
+---
+# ============ H2 文件数据库（默认，无需安装数据库，数据保存在 ./data） ============
+spring:
+  config:
+    activate:
+      on-profile: h2
+  web:
+    resources:
+      cache:
+        cachecontrol:
+          no-store: true
+          no-cache: true
+          max-age: 0
+  datasource:
+    driver-class-name: org.h2.Driver
+    # 文件型数据库：数据永久保存在 ./data/dental.mv.db，重启不丢失
+    url: jdbc:h2:file:./data/dental;MODE=MySQL;CASE_INSENSITIVE_IDENTIFIERS=TRUE;NON_KEYWORDS=YEAR
+    username: sa
+    password:
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 2
+  sql:
+    init:
+      # 关闭 Spring 自动初始化：由 DatabaseBootstrap 判断是否首次部署，
+      # 避免每次重启重复灌数据、覆盖历史业务数据
+      mode: never
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+---
+# ============ MySQL 8 模式（大型门诊正式部署推荐） ============
+# 启动方式：java -jar dental-clinic-system.jar --spring.profiles.active=mysql
+# 首次部署：先执行 交付物/schema.sql 建库建表，再执行 data-mysql.sql 初始化基础数据
+# 注意：sql.init 已关闭，避免重启时重复写入种子数据
+spring:
+  config:
+    activate:
+      on-profile: mysql
+  web:
+    resources:
+      cache:
+        cachecontrol:
+          no-store: true
+          no-cache: true
+          max-age: 0
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/dental_clinic?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: "123456"
+    hikari:
+      maximum-pool-size: 30
+      minimum-idle: 5
+  sql:
+    init:
+      mode: never
+
+server:
+  port: 8080
+  tomcat:
+    max-http-form-post-size: 10MB
+  compression:
+    enabled: true
+
+# ============ 业务配置：数据目录与备份策略 ============
+app:
+  data-dir: ./data          # H2 数据库文件目录（data/dental.mv.db）
+  backup-dir: ./backup      # 备份目录
+  backup-keep: 30           # 保留最近 30 份备份，更早的自动清理
+  backup-cron: "0 30 2 * * ?"   # 每天凌晨 02:30 自动备份
+  demo-appointments: true   # 是否自动生成今日演示预约；门诊正式使用请改为 false
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+  global-config:
+    db-config:
+      id-type: auto
+
+logging:
+  level:
+    root: warn
+    com.dental.clinic: info

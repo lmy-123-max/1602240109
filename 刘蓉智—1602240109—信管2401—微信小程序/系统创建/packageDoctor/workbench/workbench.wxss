@@ -1,0 +1,39 @@
+/* packageDoctor/workbench/workbench.wxss */
+.wb-hero {
+  background: linear-gradient(150deg, #2f9bf5, #0d5fb3);
+  padding: 56rpx 32rpx 46rpx;
+  color: #fff;
+  border-radius: 0 0 40rpx 40rpx;
+}
+.wb-hero-sm { text-align: center; padding: 48rpx 32rpx 40rpx; }
+.wb-hero-top { display: flex; align-items: center; }
+.wb-role { font-size: 26rpx; opacity: 0.9; }
+.wb-code {
+  margin-left: auto; font-size: 22rpx; opacity: 0.85;
+  background: rgba(255,255,255,0.18); padding: 6rpx 18rpx; border-radius: 24rpx;
+}
+.wb-name { font-size: 42rpx; font-weight: 700; margin-top: 20rpx; }
+.wb-sub { font-size: 25rpx; opacity: 0.85; margin-top: 10rpx; }
+
+.stat { display: flex; margin-top: -36rpx; position: relative; padding: 28rpx 0; }
+.stat-item { flex: 1; text-align: center; }
+.stat-num { font-size: 36rpx; font-weight: 700; color: var(--brand); }
+.stat-mint { color: var(--mint); font-size: 30rpx; }
+.stat-warn { color: var(--warn); }
+.stat-label { font-size: 23rpx; color: var(--muted); margin-top: 6rpx; }
+
+.func-grid { display: flex; }
+.func-item { flex: 1; text-align: center; padding: 10rpx 6rpx; }
+.func-ico {
+  width: 88rpx; height: 88rpx; margin: 0 auto 14rpx;
+  border-radius: 24rpx; font-size: 42rpx;
+  display: flex; align-items: center; justify-content: center;
+}
+.f-blue { background: var(--brand-light); }
+.f-green { background: var(--mint-light); }
+.f-orange { background: var(--warn-light); }
+.func-name { font-size: 27rpx; font-weight: 600; }
+.func-desc { font-size: 21rpx; color: var(--muted); margin-top: 6rpx; }
+
+.deny-card { margin-top: 40rpx; }
+.retry { margin-top: 24rpx; }

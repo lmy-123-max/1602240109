@@ -1,0 +1,48 @@
+<!--packageDoctor/today/today.wxml-->
+<block wx:if="{{authState === 'checking'}}">
+  <view class="loading-tip">加载中...</view>
+</block>
+
+<block wx:elif="{{authState === 'signed-out'}}">
+  <view class="card"><view class="empty"><text class="empty-ico">👤</text>请先登录并绑定牙医工号
+    <button class="btn-primary retry" bindtap="goProfile">去「我的」页处理</button></view></view>
+</block>
+
+<block wx:elif="{{authState === 'denied'}}">
+  <view class="card"><view class="empty"><text class="empty-ico">🔐</text>需要牙医身份才能查看今日队列
+    <button class="btn-primary retry" bindtap="goProfile">去「我的」页绑定工号</button></view></view>
+</block>
+
+<block wx:else>
+  <view class="t-bar card">
+    <view class="t-bar-item"><view class="t-num t-wait">{{statWait}}</view><view class="t-label">候诊</view></view>
+    <view class="t-bar-item"><view class="t-num t-serving">{{statServing}}</view><view class="t-label">诊疗中</view></view>
+    <view class="t-bar-item"><view class="t-num t-done">{{statDone}}</view><view class="t-label">已完成</view></view>
+  </view>
+
+  <view class="sect">今日患者 · {{staffInfo.name}}</view>
+  <block wx:if="{{loading}}">
+    <view class="card"><view class="loading-tip">队列加载中...</view></view>
+  </block>
+  <view class="card" wx:elif="{{!list.length}}"><view class="empty"><text class="empty-ico">🎉</text>今日暂无预约</view></view>
+  <block wx:else>
+    <view class="card appt-card" wx:for="{{list}}" wx:key="id">
+      <view class="appt-line1">
+        <text class="appt-no">{{item.appointmentNo}}</text>
+        <text class="appt-slot">{{item.slotText}}</text>
+        <text class="tag {{item.statusCls}}">{{item.statusText}}</text>
+      </view>
+      <view class="appt-line2">
+        <text class="appt-patient">👤 {{item.patientName}}</text>
+        <text class="appt-phone" data-phone="{{item.patientPhone}}" bindtap="onCallPhone">📞 {{item.patientPhone || '未留电话'}}</text>
+      </view>
+      <view class="appt-remark" wx:if="{{item.remark}}">备注：{{item.remark}}</view>
+      <view class="appt-ops">
+        <button wx:if="{{item.canCall}}" class="op-btn op-blue" data-id="{{item.id}}" bindtap="onCall">叫号接诊</button>
+        <button wx:if="{{item.canFinish}}" class="op-btn op-green" data-id="{{item.id}}" data-name="{{item.patientName}}" bindtap="onFinish">完成就诊</button>
+        <view wx:if="{{item.status === 4}}" class="op-done">✓ 已完成就诊</view>
+      </view>
+    </view>
+  </block>
+  <view class="footer-tip">下拉可刷新队列 · 叫号后患者端候诊进度实时更新</view>
+</block>

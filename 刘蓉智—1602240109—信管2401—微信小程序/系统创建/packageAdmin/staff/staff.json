@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "人员账号",
+  "usingComponents": {
+    "login-panel": "../../components/login-panel/login-panel"
+  }
+}

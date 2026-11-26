@@ -1,0 +1,24 @@
+/* pages/queue/queue.wxss */
+.picker-card { padding: 20rpx 28rpx; }
+.picker-inner { font-size: 28rpx; color: var(--brand); font-weight: 600; }
+
+.queue-hero { text-align: center; padding: 48rpx 28rpx; }
+.q-doctor { font-size: 30rpx; font-weight: 700; }
+.q-title { font-size: 22rpx; color: var(--brand); font-weight: 500; margin-left: 8rpx; }
+.q-no {
+  font-family: Menlo, Consolas, monospace;
+  font-size: 34rpx; color: var(--muted);
+  margin-top: 12rpx; letter-spacing: 2rpx;
+}
+.q-time { font-size: 24rpx; color: var(--muted); margin-top: 6rpx; }
+.q-big { font-size: 60rpx; font-weight: 700; color: var(--brand); margin-top: 30rpx; }
+.q-state { font-size: 26rpx; margin-top: 14rpx; }
+.st-wait { color: var(--warn); }
+.st-run { color: var(--mint); }
+.st-done { color: var(--muted); }
+.q-sub { font-size: 24rpx; color: var(--muted); margin-top: 10rpx; }
+.q-btn { margin-top: 34rpx; width: 320rpx; }
+
+.queue-tip { background: #fff; }
+.tip-title { font-size: 26rpx; font-weight: 600; margin-bottom: 12rpx; }
+.tip-line { font-size: 24rpx; color: var(--muted); line-height: 1.8; }

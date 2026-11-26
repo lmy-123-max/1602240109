@@ -1,0 +1,13 @@
+/* pages/records/records.wxss */
+.rec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10rpx; }
+.rec-date { font-size: 29rpx; font-weight: 700; }
+.rec-line { font-size: 25rpx; color: var(--text); opacity: 0.78; margin-top: 8rpx; line-height: 1.6; }
+.rec-title { font-size: 22rpx; color: var(--brand); }
+
+.price-card { padding: 8rpx 28rpx; }
+.price-item { display: flex; align-items: center; padding: 20rpx 0; }
+.price-item + .price-item { border-top: 1rpx solid var(--line); }
+.price-main { flex: 1; }
+.price-name { font-size: 27rpx; font-weight: 600; }
+.price-cat { font-size: 22rpx; color: var(--muted); margin-top: 4rpx; }
+.price-val { font-size: 28rpx; color: var(--danger); font-weight: 700; }

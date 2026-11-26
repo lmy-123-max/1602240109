@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>牙科连锁 · 医生工作台</title>
+<style>
+:root{
+  --brand:#1a56d6; --brand-d:#1341a8; --brand-l:#3b74e6; --brand-bg:#e8effc;
+  --ink:#1b2320; --muted:#7c8a86; --line:#e4eaf3; --bg:#f2f6fb;
+  --warn:#d9822b; --danger:#d9534f;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+button{font-family:inherit;cursor:pointer}
+.app{display:flex;min-height:100vh}
+.side{width:230px;background:linear-gradient(185deg,#1e5ce4 0%,#1443b4 78%,#123a99 100%);color:#dce7ff;
+  display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;border-radius:0 20px 20px 0;overflow:hidden;z-index:30}
+.brand{padding:22px 18px 14px;display:flex;align-items:center;gap:10px}
+.brand .mark{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-size:21px}
+.brand .logo{font-size:15.5px;font-weight:700;color:#fff;line-height:1.35}
+.brand .sub{font-size:10.5px;color:#a8c0f2;letter-spacing:.4px}
+.nav{flex:1;overflow-y:auto;padding:4px 12px 18px}
+.nav .grp{font-size:11px;color:#9db9ec;padding:14px 12px 6px;letter-spacing:1.5px}
+.nav button{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;color:#dce7ff;
+  font-size:13.5px;padding:9px 12px;text-align:left;border-radius:11px;margin:1px 0;transition:.15s}
+.nav button:hover{background:rgba(255,255,255,.1);color:#fff}
+.nav button.on{background:rgba(255,255,255,.2);color:#fff;font-weight:600;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+.nav button .ic{width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:13.5px;flex:0 0 26px}
+.side-foot{padding:12px 18px;font-size:11px;color:#8aa6d8;border-top:1px solid rgba(255,255,255,.12)}
+.main{margin-left:230px;flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{background:#fff;border-bottom:1px solid var(--line);padding:0 26px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:20;height:58px}
+.topbar h2{font-size:15px;font-weight:700;color:#1341a8;display:flex;align-items:center;gap:8px}
+.topbar .right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.topbar .link{font-size:12.5px;color:var(--muted);text-decoration:none}
+.who{display:flex;align-items:center;gap:10px}
+.who .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#3b74e6,#1a56d6);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+.who .nm{font-size:13px;font-weight:600}
+.who .rl{font-size:11px;color:var(--muted)}
+.btnout{border:1px solid var(--line);background:#fff;border-radius:18px;padding:6px 16px;font-size:12.5px;color:var(--muted)}
+.btnout:hover{color:var(--danger);border-color:#f0c9c7}
+.pgttl{padding:20px 26px 0}
+.pgttl h2{font-size:19px;font-weight:700;color:#13233f}
+.pgttl .desc{font-size:12.5px;color:var(--muted);margin-top:4px}
+.content{padding:18px 26px 40px}
+.btn{border:none;border-radius:8px;padding:8px 15px;font-size:13px;background:var(--brand);color:#fff}
+.btn:hover{background:var(--brand-d)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.ghost:hover{background:#f6f9fd}
+.btn.sm{padding:5px 11px;font-size:12.5px;border-radius:7px}
+.btn.gray{background:#eef2f7;color:#4d5a70}
+.btn.danger{background:#fdf0ef;color:var(--danger)}
+.btn.warn{background:#fdf3e6;color:#b9711f}
+.btn.blk{width:100%;padding:11px;font-size:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.card+.card{margin-top:16px}
+.card-h{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.card-h h3{font-size:14.5px;font-weight:600;color:#13233f}
+.card-h h3::before{content:'';width:4px;height:15px;background:var(--brand);border-radius:2px;margin-right:8px;display:inline-block;vertical-align:-2px}
+.card-h .hint{font-size:12px;color:var(--muted)}
+.card-h .act{margin-left:auto;display:flex;gap:8px;align-items:center}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:12px;color:var(--muted);font-weight:500;padding:9px 10px;background:#f7f9fd;border-bottom:1px solid var(--line);white-space:nowrap}
+td{font-size:13px;padding:10px;border-bottom:1px solid #f1f4f9;vertical-align:middle}
+tbody tr:hover{background:#f8faff}
+.empty{padding:36px 0;text-align:center;color:var(--muted);font-size:13px}
+.tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;line-height:1.7;white-space:nowrap}
+.ok{background:#e6f6ef;color:#0f8a5f}
+.off{background:#f0f2f2;color:#8a9a95}
+.warn{background:#fdf3e6;color:#b9711f}
+.bad{background:#fdf0ef;color:#c0453f}
+.info{background:#eaf1fc;color:#2b6ca8}
+.mono{font-family:consolas,monospace;font-size:12.5px;color:#4a5b70}
+select,input,textarea{border:1px solid #dbe3f0;border-radius:8px;padding:8px 11px;font-size:13px;outline:none;background:#fff;font-family:inherit;color:var(--ink)}
+select:focus,input:focus,textarea:focus{border-color:var(--brand-l);box-shadow:0 0 0 3px rgba(26,86,214,.1)}
+.fld{margin-bottom:13px}
+.fld label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:5px}
+.frow{display:flex;gap:12px}.frow .fld{flex:1}
+.rowline{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid #f1f4f9}
+.rowline:last-child{border-bottom:none}
+.rowline .grow{flex:1;min-width:0}
+.rowline .t1{font-size:13.5px;font-weight:600}
+.rowline .t2{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.6}
+.albox{background:#fff7e8;border:1px solid #ffe1ad;border-radius:12px;padding:10px 14px;font-size:12.5px;margin:12px 0;line-height:1.8}
+.albox.green{background:#e9f9f1;border-color:#b8ecd2}
+.albox b{color:var(--warn)}
+.albox.green b{color:var(--brand)}
+.banner{background:linear-gradient(120deg,#1a56d6,#2f6ce8 55%,#3b74e6);border-radius:16px;color:#fff;padding:24px 28px;display:flex;align-items:center;gap:18px;box-shadow:0 14px 30px rgba(26,86,214,.22)}
+.banner .wt{font-size:20px;font-weight:800}
+.banner .wd{font-size:12.5px;opacity:.88;margin-top:6px;line-height:1.7}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.stat .lb{font-size:12.5px;color:var(--muted)}
+.stat .vl{font-size:24px;font-weight:700;margin-top:6px;color:#13233f}
+.stat .vl small{font-size:12px;font-weight:400;color:var(--muted);margin-left:4px}
+#toast{position:fixed;left:50%;top:22px;transform:translateX(-50%) translateY(-16px);background:#13233f;color:#fff;
+  padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:200;max-width:70vw}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.err{background:#a8382f}
+.qbadge{width:34px;height:34px;border-radius:50%;background:var(--brand-bg);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex:0 0 34px}
+.two{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;align-items:start}
+@media (max-width:1100px){.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app" id="app" style="display:none">
+  <aside class="side">
+    <div class="brand">
+      <div class="mark">🦷</div>
+      <div><div class="logo">医生工作台<br><span class="sub">DOCTOR WORKBENCH</span></div></div>
+    </div>
+    <nav class="nav" id="nav">
+      <div class="grp">接诊</div>
+      <button data-v="dash" class="on"><span class="ic">◎</span>工作台总览</button>
+      <button data-v="queue"><span class="ic">👥</span>今日队列与叫号</button>
+      <button data-v="record"><span class="ic">📋</span>病历录入</button>
+      <button data-v="recall"><span class="ic">🔔</span>复诊提醒</button>
+      <div class="grp">我的</div>
+      <button data-v="sched"><span class="ic">🗓</span>我的排班</button>
+      <button data-v="perf"><span class="ic">📊</span>我的业绩</button>
+      <button data-v="quals"><span class="ic">🎓</span>我的资质</button>
+    </nav>
+    <div class="side-foot">牙科连锁 · 医生端（网页版）</div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <h2>🦷 牙科连锁 · 医生工作台</h2>
+      <div class="right">
+        <a class="link" href="/index.html">返回官网</a>
+        <button class="btnout" onclick="logout()">退出登录</button>
+        <div class="who">
+          <div class="avatar" id="whoAvatar">医</div>
+          <div><div class="nm" id="whoName">—</div><div class="rl" id="whoRole">牙医 · 医生工作台</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="pgttl">
+      <h2 id="pgTitle">工作台总览</h2>
+      <div class="desc" id="pgDesc">今日团队、候诊与接诊状态一屏尽览</div>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+const API='/api';
+const SLOTS={1:'上午',2:'下午',3:'晚间'};
+const AS={0:'已提交',1:'已确认',2:'已到诊',3:'诊疗中',4:'已完成',5:'已取消',6:'爽约'};
+let me=null,stores=[],doctors=[],items=[],pick=[],curAppt=null,todayAppts=[];
+
+function toast(t,ok=true){const el=document.getElementById('toast');el.textContent=t;el.className=ok?'on':'on err';setTimeout(()=>el.className='',2600)}
+async function api(p,opt={}){
+  const r=await fetch(API+p,{method:opt.method||'GET',headers:{'Content-Type':'application/json'},body:opt.body?JSON.stringify(opt.body):undefined});
+  const j=await r.json();
+  if(j.code!==200&&j.code!==0){toast(j.msg||'请求失败',false);throw new Error(j.msg)}
+  return j.data;
+}
+/* 演示快捷登录：?demo=账号（默认密码 123456） */
+(function(){
+  const q=new URLSearchParams(location.search);
+  if(q.get('demo')){
+    api('/auth/login',{method:'POST',body:{account:q.get('demo'),password:q.get('pwd')||'123456'}}).then(d=>{
+      d.account=q.get('demo');
+      sessionStorage.setItem('dental_me',JSON.stringify(d));
+      location.href=location.pathname+(location.hash||'');
+    });
+  }
+})();
+me=JSON.parse(sessionStorage.getItem('dental_me')||'null');
+const __demo=new URLSearchParams(location.search).get('demo');
+if(!me&&__demo){/* 演示登录进行中：等待写入凭证后自动刷新 */}
+else if(!me||me.role!=='doctor'){location.href='/index.html';throw new Error('redirect')}
+document.getElementById('app').style.display='flex';
+document.getElementById('whoName').textContent=me.user.realName;
+document.getElementById('whoAvatar').textContent=(me.user.realName||'医').slice(0,1);
+document.getElementById('whoRole').textContent='牙医 · '+me.account;
+function logout(){sessionStorage.removeItem('dental_me');location.href='/index.html'}
+
+const VIEWS={};
+const META={
+  dash:['工作台总览','今日医生团队、我的执业信息与接诊状态'],
+  queue:['今日队列与叫号','今日预约队列 + 门店共享候诊队列，一键接诊'],
+  record:['病历录入','选择预约单 → 填写病历 → 处置单计价 → 提交生成账单'],
+  recall:['复诊提醒','未来 30 天复诊安排（参照 OpenDental Recall）'],
+  sched:['我的排班','未来 7 天已发布排班与号源使用'],
+  perf:['我的业绩','季度业绩试算：收入、成本、净利润与提成'],
+  quals:['我的资质','执业资质证书与提交审核']
+};
+const APPT_STATUS={0:['已提交','info'],1:['已确认','ok'],2:['已到诊','info'],3:['诊疗中','warn'],4:['已完成','off'],5:['已取消','bad'],6:['爽约','bad']};
+function st(m,v){const d=m[v]||['未知','off'];return '<span class="tag '+d[1]+'">'+d[0]+'</span>'}
+const esc=s=>String(s===null||s===undefined?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money=v=>v===null||v===undefined?'-':'¥ '+Number(v).toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function setView(v){
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  const m=META[v]||['医生工作台',''];
+  document.getElementById('pgTitle').textContent=m[0];
+  document.getElementById('pgDesc').textContent=m[1];
+  location.hash=v;
+  document.getElementById('content').innerHTML='<div class="empty">加载中…</div>';
+  VIEWS[v]().catch(e=>{document.getElementById('content').innerHTML='<div class="empty">'+esc(e.message)+'</div>'});
+}
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('button[data-v]');if(b)setView(b.dataset.v)});
+
+async function loadBase(){
+  stores=await api('/common/stores');
+  doctors=await api('/common/doctors');
+  items=await api('/common/items');
+}
+function myDoctor(){return doctors.find(x=>x.doctorId===me.user.userId)||{}}
+
+/* ================= 工作台总览 ================= */
+VIEWS.dash=async()=>{
+  if(!doctors.length)await loadBase();
+  const d=myDoctor();
+  const team=await api('/queue/doctors-status').catch(()=>[]);
+  const meRow=team.find(x=>x.doctorId===me.user.userId);
+  todayAppts=await api('/appointment/today');
+  const mine=todayAppts.filter(a=>a.doctorId===me.user.userId);
+  const active=todayAppts.filter(a=>a.status>=0&&a.status<=3);
+  let h='<div class="banner"><div><div class="wt">🦷 '+esc(me.user.realName)+' · '+(d.title||'医师')+'</div>'+
+    '<div class="wd">'+(d.specialty||'全科')+' · 工号 '+(d.jobNo||'-')+' · 今日经手预约 <b>'+mine.length+'</b> 单 · 当前'+(meRow&&meRow.busy?'<b>诊疗中（'+esc(meRow.servingPatient||'-')+'）</b>':'空闲')+' · 名下候诊 <b>'+(meRow?meRow.waitingCount:0)+'</b> 人</div></div>'+
+    '<div style="margin-left:auto;display:flex;gap:10px"><button class="btn" style="background:#fff;color:#1a56d6;font-weight:600;border-radius:20px;padding:10px 20px" onclick="setView(\'queue\')">进入叫号队列</button>'+
+    '<button class="btn" style="background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:10px 20px" onclick="setView(\'record\')">录入病历</button></div></div>';
+  h+='<div class="stats" style="margin-top:16px">'+
+    '<div class="stat"><div class="lb">今日全体待处理</div><div class="vl">'+active.length+'<small>单</small></div></div>'+
+    '<div class="stat"><div class="lb">我的今日预约</div><div class="vl">'+mine.length+'<small>单</small></div></div>'+
+    '<div class="stat"><div class="lb">名下候诊</div><div class="vl">'+(meRow?meRow.waitingCount:0)+'<small>人</small></div></div>'+
+    '<div class="stat"><div class="lb">执业状态</div><div class="vl" style="font-size:16px;line-height:1.6">'+(d.specialty||'全科')+'<br><small>'+(d.practiceNo?'执业证 '+(d.practiceNo||''):'')+'</small></div></div></div>';
+  h+='<div class="two" style="margin-top:16px">';
+  /* 今日医生团队 */
+  h+='<div class="card"><div class="card-h"><h3>今日医生团队</h3><span class="hint">共享候诊：先完成治疗者可接手其他医生名下患者</span></div>';
+  h+=team.length?team.map(x=>{
+    const meTag=x.doctorId===me.user.userId?'<span class="tag ok" style="margin-left:4px">我</span>':'';
+    return '<div class="rowline"><div style="font-size:20px">'+(x.busy?'🦷':'🧑‍⚕️')+'</div>'+
+      '<div class="grow"><div class="t1">'+esc(x.doctorName)+meTag+'（'+esc(x.title||'医师')+' · '+esc(x.specialty||'全科')+'）</div>'+
+      '<div class="t2">'+(x.busy?'正在接诊：'+esc(x.servingPatient||'-')+' · 名下候诊 '+x.waitingCount+' 人':'名下候诊 '+x.waitingCount+' 人 · 可接诊门店内任意候诊患者')+'</div></div>'+
+      (x.busy?'<span class="tag warn">诊疗中</span>':'<span class="tag info">空闲</span>')+'</div>';
+  }).join(''):'<div class="empty">今日暂无医生排班</div>';
+  h+='</div>';
+  /* 我的今日预约 */
+  h+='<div class="card"><div class="card-h"><h3>我的今日预约</h3><div class="act"><button class="btn ghost sm" onclick="setView(\'queue\')">去队列处理</button></div></div>';
+  h+=mine.length?mine.slice(0,8).map(a=>'<div class="rowline"><div style="font-size:20px">🧑</div>'+
+    '<div class="grow"><div class="t1">'+esc(a.patientName)+' · '+esc(a.timeSlot||'')+'</div>'+
+    '<div class="t2"><span class="mono">'+esc(a.appointmentNo)+'</span> · 挂号费 ¥'+(a.depositAmount||20)+'</div></div>'+
+    st(APPT_STATUS,a.status)+'</div>').join(''):'<div class="empty">今日名下暂无预约</div>';
+  h+='</div></div>';
+  document.getElementById('content').innerHTML=h;
+};
+
+/* ================= 今日队列与叫号 ================= */
+VIEWS.queue=async()=>{
+  todayAppts=await api('/appointment/today');
+  const list=todayAppts.filter(a=>a.status>=0&&a.status<=3);
+  const qs=await api('/queue/today').catch(()=>[]);
+  let h='<div class="card"><div class="card-h"><h3>今日预约队列</h3><span class="hint">已到诊 / 诊疗中的患者，点「诊疗」进入病历录入</span>'+
+    '<div class="act"><button class="btn ghost sm" onclick="setView(\'queue\')">刷新</button></div></div>';
+  if(!list.length){h+='<div class="empty">今日暂无到诊任务</div></div>'}
+  else{
+    h+='<table><thead><tr><th>患者</th><th>时段</th><th>预约号</th><th>过敏史</th><th>状态</th><th style="width:120px">操作</th></tr></thead><tbody>';
+    for(const a of list){
+      const als=await api('/patient/'+a.patientId+'/allergies').catch(()=>[]);
+      const al=als.length?als.map(x=>x.allergenName).join('、'):'无';
+      h+='<tr><td><b>'+esc(a.patientName)+'</b></td><td>'+esc(a.timeSlot||'-')+'</td><td class="mono">'+esc(a.appointmentNo)+'</td>'+
+        '<td>'+(al==='无'?'无':'<b style="color:var(--danger)">⚠ '+esc(al)+'</b>')+'</td><td>'+st(APPT_STATUS,a.status)+'</td><td>'+
+        (a.status<=1?'<button class="btn sm" onclick="checkin('+a.appointmentId+')">签到</button>':'')+
+        (a.status===2||a.status===3?'<button class="btn warn sm" onclick="gotoRecord('+a.appointmentId+','+a.patientId+')">'+(a.status===2?'诊疗':'继续')+'</button>':'')+
+        '</td></tr>';
+    }
+    h+='</tbody></table></div>';
+  }
+  h+='<div class="card"><div class="card-h"><h3>门店共享候诊队列</h3><span class="hint">先完成治疗的医生可接手其他医生名下排队患者</span></div>';
+  h+=qs.length?qs.map(q=>'<div class="rowline"><div class="qbadge">'+q.seq+'</div>'+
+    '<div class="grow"><div class="t1">'+esc(q.patientName)+' · '+esc(q.timeSlot||'')+'</div>'+
+    '<div class="t2"><span class="mono">'+esc(q.appointmentNo)+'</span> · 接诊医生：'+esc(q.doctorName||'-')+
+    (q.allergens&&q.allergens.length?' · <b style="color:var(--danger)">⚠️ 过敏：'+esc(q.allergens.join('、'))+'</b>':'')+'</div></div>'+
+    '<span class="tag '+(q.status===2?'info':'warn')+'">'+(q.status===2?'待就诊':'诊疗中')+'</span>'+
+    (q.status===2?'<button class="btn sm" onclick="callPatient('+q.appointmentId+')">'+(q.doctorId===me.user.userId?'叫号':'接诊')+'</button>':'')+
+    '</div>').join(''):'<div class="empty">暂无候诊患者（签到后进入队列）</div>';
+  h+='</div>';
+  document.getElementById('content').innerHTML=h;
+};
+async function checkin(id){
+  await api('/appointment/'+id+'/checkin',{method:'POST'});
+  toast('签到成功，患者进入候诊队列');
+  setView('queue');
+}
+async function callPatient(id){
+  try{
+    await api('/queue/'+id+'/call?doctorId='+me.user.userId,{method:'POST'});
+    toast('已接诊，开始诊疗');
+    setView('queue');
+  }catch(e){}
+}
+function gotoRecord(apptId,patientId){
+  localStorage.setItem('dental_curAppt',apptId);
+  setView('record');
+}
+
+/* ================= 病历录入 ================= */
+VIEWS.record=async()=>{
+  if(!items.length)await loadBase();
+  todayAppts=await api('/appointment/today');
+  const cand=todayAppts.filter(a=>a.status===2||a.status===3);
+  const pre=+localStorage.getItem('dental_curAppt')||0;
+  localStorage.removeItem('dental_curAppt');
+  let h='<div class="card"><div class="card-h"><h3>病历录入（过敏校验 + 自动账单）</h3><span class="hint">提交后自动生成电子账单，患者端可缴费</span></div>'+
+    '<div class="fld"><label>① 选择患者预约单（已到诊 / 诊疗中）</label><select id="tAppt" onchange="pickFromSel()">'+
+    '<option value="">— 请选择 —</option>'+
+    cand.map(a=>'<option value="'+a.appointmentId+'"'+(a.appointmentId===pre?' selected':'')+'>'+esc(a.patientName)+' · '+esc(a.timeSlot||'')+' · '+AS[a.status]+'（'+esc(a.appointmentNo)+'）</option>').join('')+
+    '</select></div>'+
+    '<div class="fld"><label>② 主诉</label><input id="tComplaint" placeholder="如：左下后牙疼痛一周"></div>'+
+    '<div class="frow"><div class="fld"><label>诊断</label><input id="tDiagnosis" placeholder="如：36 中龋"></div>'+
+    '<div class="fld" style="flex:0 0 110px"><label>牙位</label><input id="tTooth" placeholder="16"></div></div>'+
+    '<div class="frow"><div class="fld"><label>诊疗项目（🏷 医保：甲类全额 / 乙类70% / 自费）</label><select id="tItem">'+
+    [...new Set(items.map(i=>i.category||'其他'))].map(c=>'<optgroup label="'+esc(c)+'">'+
+      items.filter(i=>(i.category||'其他')===c).map(i=>{const ins=i.insuranceType||'自费';
+        return '<option value="'+i.itemId+'">'+esc(i.itemName)+'（¥'+i.price+'/'+esc(i.unit||'次')+' · '+(ins==='自费'?'🈳自费':'🏷'+ins+(ins==='乙类'?'70%':'全额'))+'）</option>'}).join('')+'</optgroup>').join('')+
+    '</select></div><div class="fld" style="flex:0 0 100px"><label>数量</label><input id="tQty" type="number" value="1" min="1"></div></div>'+
+    '<button class="btn ghost" style="width:100%" onclick="addItem()">＋ 加入处置单</button>'+
+    '<div id="pickList" style="margin-top:10px"></div><div id="pickTotal" style="font-size:13px;color:var(--muted);margin-top:6px"></div>'+
+    '<button class="btn blk" style="margin-top:12px" onclick="submitTreatment()">提交病历并生成账单</button></div>'+
+    '<div id="alTip"></div>';
+  document.getElementById('content').innerHTML=h;
+  if(pre)pickFromSel();
+};
+async function pickAppt(id,pid){
+  curAppt=id;
+  const als=await api('/patient/'+pid+'/allergies').catch(()=>[]);
+  const al=als.length?als.map(x=>x.allergenName).join('、'):'无';
+  const a=todayAppts.find(x=>x.appointmentId===id);
+  const pname=a?a.patientName:('患者#'+pid);
+  document.getElementById('alTip').innerHTML=al!=='无'
+    ?'<div class="albox"><b>⚠ 过敏史警示（'+esc(pname)+'）：</b>'+esc(al)+' —— 处置若命中过敏原将被系统拦截</div>'
+    :'<div class="albox green"><b>'+esc(pname)+' 无过敏记录</b></div>';
+  toast('已选择预约 #'+id+'（'+pname+'），请填写病历');
+}
+function pickFromSel(){
+  const id=+document.getElementById('tAppt').value;
+  if(!id)return;
+  const a=todayAppts.find(x=>x.appointmentId===id);
+  if(a)pickAppt(id,a.patientId);
+}
+function addItem(){
+  const id=+document.getElementById('tItem').value;
+  const qty=+document.getElementById('tQty').value||1;
+  const it=items.find(i=>i.itemId===id);
+  pick.push({itemId:id,name:it.itemName,price:it.price,qty,rate:+(it.insuranceRate||0)});
+  renderPick();
+}
+function renderPick(){
+  const t=pick.reduce((s,d)=>s+d.price*d.qty,0);
+  const cov=pick.reduce((s,d)=>s+Math.round(d.price*d.qty*d.rate*100)/100,0);
+  document.getElementById('pickTotal').innerHTML=pick.length
+    ?'处置单合计 <b>¥'+t.toFixed(2)+'</b> · 医保预估报销 <b style="color:#1a7f4f">¥'+cov.toFixed(2)+'</b> · 个人负担约 <b>¥'+(t-cov).toFixed(2)+'</b>（结算时另抵扣挂号费 20 元）'
+    :'';
+  document.getElementById('pickList').innerHTML=pick.map((d,i)=>'<div class="rowline" style="padding:6px 2px">'+
+    '<div class="grow"><div class="t1" style="font-size:13px">'+esc(d.name)+' × '+d.qty+'</div></div>'+
+    '<span style="font-size:13px">¥'+(d.price*d.qty).toFixed(2)+'</span>'+
+    '<button class="btn gray sm" onclick="pick.splice('+i+',1);renderPick()">删</button></div>').join('');
+}
+async function submitTreatment(){
+  if(!curAppt){toast('请先选择患者预约单',false);return}
+  if(!pick.length){toast('请至少添加一项诊疗项目',false);return}
+  const a=todayAppts.find(x=>x.appointmentId===curAppt);
+  const r=await api('/treatment/submit',{method:'POST',body:{
+    record:{appointmentId:curAppt,chiefComplaint:document.getElementById('tComplaint').value,
+      diagnosis:document.getElementById('tDiagnosis').value,toothPosition:document.getElementById('tTooth').value},
+    details:pick.map(d=>({itemId:d.itemId,quantity:d.qty,unitPrice:d.price}))}});
+  toast(r.allergyCheck===1
+    ?r.message+'（病历#'+r.recordId+' · 电子账单已生成，请通知患者缴费）'
+    :r.message,r.allergyCheck===1);
+  pick=[];curAppt=null;
+  document.getElementById('tComplaint').value='';document.getElementById('tDiagnosis').value='';document.getElementById('tTooth').value='';
+  renderPick();
+  setView('queue');
+}
+
+/* ================= 复诊提醒 ================= */
+VIEWS.recall=async()=>{
+  const list=await api('/queue/recalls?days=30').catch(()=>[]);
+  let h='<div class="card"><div class="card-h"><h3>复诊提醒（未来 30 天）</h3><span class="hint">参照 OpenDental Recall 机制</span></div>';
+  h+=list.length?'<table><thead><tr><th>患者</th><th>诊断</th><th>牙位</th><th>复诊日期</th><th>倒计时</th></tr></thead><tbody>'+
+    list.map(r=>'<tr><td><b>'+esc(r.patientName)+'</b></td><td>'+esc(r.diagnosis||'复诊')+'</td><td>'+esc(r.toothPosition||'-')+'</td>'+
+    '<td>'+esc(r.nextVisit)+'</td><td><span class="tag '+(r.urgent?'bad':'info')+'">'+(r.daysLeft===0?'今天':r.daysLeft+' 天后')+'</span></td></tr>').join('')+
+    '</tbody></table>':'<div class="empty">未来 30 天无复诊安排</div>';
+  document.getElementById('content').innerHTML=h+'</div>';
+};
+
+/* ================= 我的排班 ================= */
+VIEWS.sched=async()=>{
+  const list=(await api('/schedule/all').catch(()=>[])).filter(s=>s.doctorId===me.user.userId&&s.workDate>=new Date().toISOString().slice(0,10)&&s.status===1);
+  let h='<div class="card"><div class="card-h"><h3>我的排班（未来 7 天）</h3><span class="hint">由门店管理员创建并发布</span></div>';
+  h+=list.length?'<table><thead><tr><th>日期</th><th>时段</th><th>门店</th><th>牙椅</th><th>号源使用</th><th>状态</th></tr></thead><tbody>'+
+    list.map(s=>'<tr><td>'+s.workDate+'</td><td>'+SLOTS[s.timeSlot]+'</td><td>门店#'+s.storeId+'</td><td>#'+(s.chairId||'-')+'</td>'+
+    '<td>'+s.quotaUsed+'/'+s.quotaTotal+'</td><td><span class="tag info">已发布</span></td></tr>').join('')+
+    '</tbody></table>':'<div class="empty">未来 7 天暂无排班</div>';
+  document.getElementById('content').innerHTML=h+'</div>';
+};
+
+/* ================= 我的业绩 ================= */
+VIEWS.perf=async()=>{
+  const d=myDoctor();
+  let h='<div class="card"><div class="card-h"><h3>季度业绩试算</h3><span class="hint">提成比例 10%</span></div>'+
+    '<div class="frow"><div class="fld"><label>年份</label><input type="number" id="pMyYear" value="'+new Date().getFullYear()+'"></div>'+
+    '<div class="fld"><label>季度</label><select id="pMyQuarter"><option>1</option><option>2</option><option>3</option><option selected>4</option></select></div>'+
+    '<div class="fld" style="flex:0 0 140px;display:flex;align-items:flex-end"><button class="btn" style="width:100%" onclick="myPerf()">查询</button></div></div>'+
+    '<div id="mePerfOut"></div></div>';
+  h+='<div class="card"><div class="card-h"><h3>执业信息</h3></div><div class="rowline"><div style="font-size:26px">🦷</div>'+
+    '<div class="grow"><div class="t1">'+esc(me.user.realName)+'（'+esc(d.title||'医师')+'）</div>'+
+    '<div class="t2">科室专长：'+esc(d.specialty||'全科')+' · 工号 '+(d.jobNo||'-')+' · 执业证 '+(d.practiceNo||'-')+' · 归属门店#'+(d.homeStoreId||'-')+'</div></div></div></div>';
+  document.getElementById('content').innerHTML=h;
+};
+async function myPerf(){
+  const q=new URLSearchParams({doctorId:me.user.userId,storeId:myDoctor().homeStoreId||1,
+    year:document.getElementById('pMyYear').value,quarter:document.getElementById('pMyQuarter').value});
+  const p=await api('/performance/trial-calc?'+q,{method:'POST'});
+  const row=(k,v,c='')=>'<div class="rowline" style="padding:6px 2px"><div class="t2" style="margin:0">'+k+'</div>'+
+    '<div style="margin-left:auto;font-weight:700;color:'+c+'">¥'+v+'</div></div>';
+  document.getElementById('mePerfOut').innerHTML='<div class="card" style="box-shadow:none;border:1px solid var(--line);margin-top:6px">'+
+    row('经办收入',p.revenue,'var(--brand)')+' '+row('直接耗材成本',p.directCost,'var(--warn)')+
+    row('净利润',p.netProfit,p.netProfit>=0?'var(--brand)':'var(--danger)')+
+    row('激励奖金（10%）',p.incentiveAmount,'var(--brand-l)')+'</div>';
+}
+
+/* ================= 我的资质 ================= */
+VIEWS.quals=async()=>{
+  const quals=await api('/common/qualifications?doctorId='+me.user.userId).catch(()=>[]);
+  const qn={0:'待初审',1:'初审通过',2:'终审通过',3:'已驳回'},qc={0:'bad',1:'info',2:'ok',3:'off'};
+  let h='<div class="albox">🦷 <b>执业信息提醒</b>：接诊范围请与科室专长一致，严禁跨资质执业；资质证书到期前请及时更新并重新提交审核。</div>';
+  h+='<div class="card"><div class="card-h"><h3>我的执业资质证书</h3><span class="hint">共 '+quals.length+' 份</span></div>';
+  h+=quals.length?'<table><thead><tr><th>证书名称</th><th>证书编号</th><th>发证机构</th><th>有效期至</th><th>审核状态</th></tr></thead><tbody>'+
+    quals.map(q=>'<tr><td><b>'+esc(q.qualName)+'</b></td><td class="mono">'+esc(q.certNo)+'</td><td>'+esc(q.issueOrg||'-')+'</td>'+
+    '<td>'+esc(q.expireDate||'-')+'</td><td><span class="tag '+qc[q.auditStatus]+'">'+qn[q.auditStatus]+'</span></td></tr>').join('')+
+    '</tbody></table>':'<div class="empty">暂无资质记录，请在下方提交</div>';
+  h+='</div>';
+  h+='<div class="card"><div class="card-h"><h3>提交新资质证书</h3><span class="hint">提交后进入门店初审 → 总部终审队列</span></div>'+
+    '<div class="fld"><label>证书名称</label><input id="qName" placeholder="如：口腔正畸专科培训合格证"></div>'+
+    '<div class="frow"><div class="fld"><label>证书编号</label><input id="qCert" placeholder="TR20240001"></div>'+
+    '<div class="fld"><label>发证机构</label><input id="qOrg" placeholder="中华口腔医学会"></div></div>'+
+    '<div class="fld"><label>有效期至</label><input id="qExp" type="date"></div>'+
+    '<button class="btn blk" onclick="submitQual()">提交资质审核</button></div>';
+  document.getElementById('content').innerHTML=h;
+};
+async function submitQual(){
+  const body={doctorId:me.user.userId,qualName:document.getElementById('qName').value.trim(),
+    certNo:document.getElementById('qCert').value.trim(),issueOrg:document.getElementById('qOrg').value.trim(),
+    expireDate:document.getElementById('qExp').value||null};
+  if(!body.qualName||!body.certNo){toast('证书名称与编号必填',false);return}
+  await api('/common/qualifications/submit',{method:'POST',body});
+  document.getElementById('qName').value='';document.getElementById('qCert').value='';
+  toast('资质已提交，等待门店初审');
+  setView('quals');
+}
+
+/* ================= 启动 ================= */
+loadBase().then(()=>{
+  const v=(location.hash||'#dash').slice(1);
+  setView(META[v]?v:'dash');
+});
+</script>
+</body>
+</html>

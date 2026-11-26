@@ -1,0 +1,75 @@
+<!--packageDoctor/workbench/workbench.wxml-->
+<block wx:if="{{authState === 'checking'}}">
+  <view class="loading-tip">身份检查中...</view>
+</block>
+
+<block wx:elif="{{authState === 'signed-out'}}">
+  <view class="wb-hero wb-hero-sm">
+    <view class="wb-hero-title">医生工作台</view>
+    <view class="wb-hero-sub">请先登录，再绑定牙医工号进入</view>
+  </view>
+  <view class="card">
+    <login-panel bind:signedin="onSignedIn" />
+  </view>
+</block>
+
+<block wx:elif="{{authState === 'denied'}}">
+  <view class="card deny-card">
+    <view class="empty">
+      <text class="empty-ico">🔐</text>
+      尚未绑定牙医工号，或当前绑定身份不是牙医
+      <button class="btn-primary retry" bindtap="goProfile">去「我的」页绑定工号</button>
+    </view>
+  </view>
+</block>
+
+<block wx:else>
+  <view class="wb-hero">
+    <view class="wb-hero-top">
+      <view class="wb-role">🦷 医生工作台</view>
+      <view class="wb-code">工号 {{staffInfo.staffCode}}</view>
+    </view>
+    <view class="wb-name">{{staffInfo.name}}</view>
+    <view class="wb-sub">{{staffInfo.title}} · 今日 {{perf.todayCount || 0}} 位患者候诊</view>
+  </view>
+
+  <view class="stat card">
+    <view class="stat-item">
+      <view class="stat-num">{{perf.todayCount || 0}}</view>
+      <view class="stat-label">今日接诊</view>
+    </view>
+    <view class="stat-item">
+      <view class="stat-num">{{perf.monthDone || 0}}</view>
+      <view class="stat-label">本月完成</view>
+    </view>
+    <view class="stat-item">
+      <view class="stat-num stat-mint">¥{{perf.revenueText || '0'}}</view>
+      <view class="stat-label">本月业绩</view>
+    </view>
+    <view class="stat-item">
+      <view class="stat-num stat-warn">{{perf.recallCount || 0}}</view>
+      <view class="stat-label">待复诊</view>
+    </view>
+  </view>
+
+  <view class="sect">工作功能</view>
+  <view class="card func-grid">
+    <view class="func-item" bindtap="goToday">
+      <view class="func-ico f-blue">🩺</view>
+      <view class="func-name">今日队列</view>
+      <view class="func-desc">叫号接诊 · 完成就诊</view>
+    </view>
+    <view class="func-item" bindtap="goSchedule">
+      <view class="func-ico f-green">🗓</view>
+      <view class="func-name">我的排班</view>
+      <view class="func-desc">未来两周出诊安排</view>
+    </view>
+    <view class="func-item" bindtap="goPerf">
+      <view class="func-ico f-orange">📈</view>
+      <view class="func-name">我的业绩</view>
+      <view class="func-desc">诊疗量与业绩统计</view>
+    </view>
+  </view>
+
+  <view class="footer-tip">医生工作台 · 与患者端数据实时互通</view>
+</block>

@@ -1,0 +1,88 @@
+/**app.wxss — 全局设计变量与通用样式**/
+page {
+  --brand: #1a7ce0;
+  --brand-deep: #0d5fb3;
+  --brand-light: #e8f2ff;
+  --mint: #12b886;
+  --mint-light: #e6f9f2;
+  --warn: #f59f00;
+  --warn-light: #fff7e6;
+  --danger: #e8590c;
+  --danger-light: #fff0e6;
+  --text: #1f2d3d;
+  --muted: #8792a3;
+  --line: #edf1f6;
+  --bg: #f4f7fb;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 28rpx;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  margin: 0 24rpx 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(31, 45, 61, 0.05);
+}
+
+.sect {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin: 8rpx 32rpx 20rpx;
+  display: flex;
+  align-items: center;
+}
+.sect::before {
+  content: "";
+  width: 8rpx;
+  height: 30rpx;
+  border-radius: 4rpx;
+  background: var(--brand);
+  margin-right: 14rpx;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #35a2f5, #1a7ce0);
+  color: #fff;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  padding: 6rpx 0;
+  border: none;
+}
+.btn-primary[disabled] {
+  opacity: 0.55;
+  color: #fff;
+}
+.btn-ghost {
+  background: var(--brand-light);
+  color: var(--brand);
+  border-radius: 44rpx;
+  font-size: 28rpx;
+  padding: 4rpx 0;
+  border: none;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 22rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+}
+.tag-blue { background: var(--brand-light); color: var(--brand); }
+.tag-green { background: var(--mint-light); color: var(--mint); }
+.tag-orange { background: var(--warn-light); color: var(--warn); }
+.tag-red { background: var(--danger-light); color: var(--danger); }
+.tag-gray { background: #f0f2f6; color: var(--muted); }
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  font-size: 26rpx;
+  padding: 80rpx 0;
+}
+.empty .empty-ico { font-size: 72rpx; display: block; margin-bottom: 16rpx; }
+
+.loading-tip { text-align: center; color: var(--muted); font-size: 26rpx; padding: 60rpx 0; }

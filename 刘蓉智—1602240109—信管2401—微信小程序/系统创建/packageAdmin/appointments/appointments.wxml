@@ -1,0 +1,49 @@
+<!--packageAdmin/appointments/appointments.wxml-->
+<block wx:if="{{authState === 'checking'}}">
+  <view class="loading-tip">加载中...</view>
+</block>
+
+<block wx:elif="{{authState !== 'ready'}}">
+  <view class="card"><view class="empty"><text class="empty-ico">🔐</text>需要管理员工号
+    <button class="btn-primary retry" bindtap="goProfile">去「我的」页绑定工号</button></view></view>
+</block>
+
+<block wx:else>
+  <view class="filters card">
+    <picker mode="date" value="{{date}}" bindchange="onDate">
+      <view class="filter-chip {{date ? 'filter-on' : ''}}">
+        {{date || '选择日期'}} <text wx:if="{{date}}" class="filter-clear" catchtap="clearDate">✕</text>
+      </view>
+    </picker>
+    <picker range="{{statusOptions}}" value="{{statusIndex}}" bindchange="onStatus">
+      <view class="filter-chip">{{statusOptions[statusIndex]}} ▾</view>
+    </picker>
+    <view class="filter-count">共 {{list.length}} 条</view>
+  </view>
+
+  <block wx:if="{{loading}}">
+    <view class="card"><view class="loading-tip">预约加载中...</view></view>
+  </block>
+  <view class="card" wx:elif="{{!list.length}}"><view class="empty"><text class="empty-ico">📅</text>没有符合条件的预约</view></view>
+  <block wx:else>
+    <view class="card a-card" wx:for="{{list}}" wx:key="id">
+      <view class="a-line1">
+        <text class="a-no">{{item.appointmentNo}}</text>
+        <text wx:if="{{item.isToday}}" class="a-today">今日</text>
+        <text class="tag {{item.statusCls}}">{{item.statusText}}</text>
+      </view>
+      <view class="a-info">{{item.visitDate}} · {{item.slotText}}</view>
+      <view class="a-line2">
+        <text>👤 {{item.patientName}}</text>
+        <text class="a-phone" data-phone="{{item.patientPhone}}" bindtap="onCallPhone">📞 {{item.patientPhone || '未留电话'}}</text>
+      </view>
+      <view class="a-info">🦷 {{item.doctorName}} · 🏠 {{item.storeName}}</view>
+      <view class="a-ops">
+        <button wx:if="{{item.canConfirm}}" class="op-btn op-blue" data-id="{{item.id}}" bindtap="onConfirm">确认</button>
+        <button wx:if="{{item.canCancel}}" class="op-btn op-danger" data-id="{{item.id}}" bindtap="onCancel">取消</button>
+        <view wx:else class="a-none">无待办操作</view>
+      </view>
+    </view>
+  </block>
+  <view class="footer-tip">下拉刷新 · 门店管理员仅可操作本门店预约</view>
+</block>

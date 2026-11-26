@@ -1,0 +1,67 @@
+<!--pages/queue/queue.wxml-->
+<block wx:if="{{authState === 'checking'}}">
+  <view class="loading-tip">登录状态检查中...</view>
+</block>
+<block wx:elif="{{authState === 'signed-out'}}">
+  <view class="card" style="margin-top: 40rpx;">
+    <view class="empty">
+      <text class="empty-ico">🔐</text>
+      请先登录后查看候诊进度
+    </view>
+  </view>
+</block>
+<block wx:else>
+  <block wx:if="{{loading}}">
+    <view class="card" style="margin-top: 30rpx;"><view class="loading-tip">候诊信息加载中...</view></view>
+  </block>
+  <block wx:elif="{{!list.length}}">
+    <view class="card" style="margin-top: 30rpx;">
+      <view class="empty">
+        <text class="empty-ico">🚶</text>
+        今天没有待就诊的预约
+      </view>
+    </view>
+  </block>
+  <block wx:else>
+    <view class="card picker-card" wx:if="{{list.length > 1}}">
+      <picker range="{{pickerNames}}" value="{{pickerIndex}}" bindchange="onPick">
+        <view class="picker-inner">今日就诊：{{pickerNames[pickerIndex]}} ▾</view>
+      </picker>
+    </view>
+
+    <view class="queue-hero card">
+      <view class="q-doctor">{{cur.doctorName}} <text class="q-title">{{cur.doctorTitle}}</text></view>
+      <view class="q-no">{{cur.appointmentNo}}</view>
+      <view class="q-time">{{cur.visitDate}} {{cur.slotText}} · {{cur.storeName}}</view>
+
+      <block wx:if="{{cur.status === 1}}">
+        <view class="q-state st-wait">已确认 · 请按时段到院签到取号</view>
+        <button class="btn-primary q-btn" bindtap="onCheckin">到院签到取号</button>
+      </block>
+      <block wx:elif="{{cur.status === 2}}">
+        <view class="q-big">第 {{queue.mySeq}} 位</view>
+        <view class="q-state st-run">排队中 · 前面还有 {{queue.ahead}} 位</view>
+        <view class="q-sub">医生正在接诊 {{queue.serving}} 位患者 · 本队列共 {{queue.waitingTotal}} 位候诊</view>
+      </block>
+      <block wx:elif="{{cur.status === 3}}">
+        <view class="q-big">诊疗中 🦷</view>
+        <view class="q-state st-run">请留意诊室叫号，祝您就诊顺利</view>
+      </block>
+      <block wx:elif="{{cur.status === 4}}">
+        <view class="q-big">已完成 ✅</view>
+        <view class="q-state st-done">就诊结束，可前往「我的病历」查看记录</view>
+      </block>
+      <block wx:else>
+        <view class="q-big">已取消</view>
+        <view class="q-state st-done">如需就诊请重新预约</view>
+      </block>
+    </view>
+
+    <view class="card queue-tip">
+      <view class="tip-title">温馨提示</view>
+      <view class="tip-line">· 请保持页面打开，每 15 秒自动刷新排队进度</view>
+      <view class="tip-line">· 过号后请与前台联系，重新安排就诊顺序</view>
+      <view class="tip-line">· 候诊期间如身体不适，请及时告知医护人员</view>
+    </view>
+  </block>
+</block>

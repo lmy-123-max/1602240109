@@ -1,0 +1,25 @@
+/* packageAdmin/logs/logs.wxss — 操作留痕 */
+.lg-hero { padding: 36rpx 32rpx 12rpx; }
+.lg-title { font-size: 36rpx; font-weight: 600; color: var(--text); }
+.lg-sub { font-size: 24rpx; color: var(--muted); margin-top: 10rpx; line-height: 1.6; }
+
+.lg-filter-card { padding: 20rpx 24rpx; }
+.lg-tabs { display: flex; gap: 14rpx; flex-wrap: wrap; }
+.lg-tab {
+  font-size: 24rpx; color: var(--muted);
+  background: #f4f7fb; border-radius: 26rpx;
+  padding: 10rpx 26rpx;
+}
+.lg-tab.on { background: var(--brand-light); color: var(--brand); font-weight: 600; }
+.lg-search {
+  margin-top: 18rpx;
+  background: #f4f7fb; border-radius: 12rpx;
+  padding: 16rpx 22rpx; font-size: 26rpx;
+}
+
+.lg-item { margin-bottom: 0; }
+.lg-head { display: flex; align-items: center; gap: 14rpx; }
+.lg-target { font-size: 28rpx; font-weight: 600; color: var(--text); flex: 1; min-width: 0; }
+.lg-line { font-size: 24rpx; color: var(--muted); margin-top: 10rpx; line-height: 1.6; }
+.lg-time { font-size: 22rpx; color: #a5aeb9; margin-top: 12rpx; }
+.retry { margin-top: 20rpx; }

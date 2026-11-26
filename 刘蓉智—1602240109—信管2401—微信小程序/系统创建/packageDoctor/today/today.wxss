@@ -1,0 +1,31 @@
+/* packageDoctor/today/today.wxss */
+page { background: var(--bg); }
+.t-bar { display: flex; padding: 24rpx 0; }
+.t-bar-item { flex: 1; text-align: center; }
+.t-num { font-size: 38rpx; font-weight: 700; }
+.t-wait { color: var(--warn); }
+.t-serving { color: var(--brand); }
+.t-done { color: var(--mint); }
+.t-label { font-size: 23rpx; color: var(--muted); margin-top: 4rpx; }
+
+.appt-line1 { display: flex; align-items: center; gap: 14rpx; }
+.appt-no { font-size: 24rpx; color: var(--muted); font-family: monospace; }
+.appt-slot { font-size: 25rpx; color: var(--text); }
+.appt-line1 .tag { margin-left: auto; }
+.appt-line2 { display: flex; align-items: center; margin-top: 14rpx; }
+.appt-patient { font-size: 29rpx; font-weight: 600; }
+.appt-phone { margin-left: auto; font-size: 24rpx; color: var(--brand); }
+.appt-remark {
+  font-size: 23rpx; color: var(--muted); margin-top: 10rpx;
+  background: #f8fafc; border-radius: 10rpx; padding: 10rpx 16rpx;
+}
+.appt-ops { display: flex; gap: 16rpx; margin-top: 18rpx; align-items: center; }
+.op-btn {
+  font-size: 25rpx; color: #fff; border-radius: 30rpx;
+  padding: 0 34rpx; line-height: 62rpx; margin: 0;
+}
+.op-btn::after { border: none; }
+.op-blue { background: var(--brand); }
+.op-green { background: var(--mint); }
+.op-done { font-size: 24rpx; color: var(--mint); }
+.retry { margin-top: 20rpx; }

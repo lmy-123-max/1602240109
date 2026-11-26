@@ -1,0 +1,31 @@
+/* pages/bills/bills.wxss */
+.amount-hero {
+  margin-top: 24rpx;
+  background: linear-gradient(135deg, #35a2f5, #1a7ce0);
+  color: #fff;
+}
+.ah-label { font-size: 26rpx; opacity: 0.9; }
+.ah-value { font-size: 64rpx; font-weight: 700; margin-top: 10rpx; }
+.ah-sub { font-size: 24rpx; opacity: 0.85; margin-top: 8rpx; }
+
+.tabs { display: flex; margin: 20rpx 24rpx 4rpx; background: #fff; border-radius: 20rpx; padding: 8rpx; }
+.tab { flex: 1; text-align: center; font-size: 26rpx; color: var(--muted); padding: 14rpx 0; border-radius: 14rpx; }
+.tab-on { background: var(--brand-light); color: var(--brand); font-weight: 600; }
+
+.bill-head { display: flex; justify-content: space-between; align-items: baseline; }
+.bill-item { font-size: 29rpx; font-weight: 600; }
+.bill-amount { font-size: 32rpx; font-weight: 700; color: var(--danger); }
+.bill-line { font-size: 24rpx; color: var(--muted); margin-top: 8rpx; }
+.bill-foot { display: flex; align-items: center; margin-top: 18rpx; }
+.bill-channel { font-size: 22rpx; color: var(--muted); margin-left: 16rpx; }
+.op { font-size: 24rpx; border-radius: 28rpx; padding: 10rpx 28rpx; margin-left: auto; }
+.op-green { background: var(--mint); color: #fff; }
+
+/* 医保报销明细 */
+.bill-ins { display: flex; align-items: center; gap: 12rpx; margin-top: 12rpx; flex-wrap: wrap; }
+.bi-tag {
+  font-size: 22rpx; color: #0b7a4b;
+  background: #e6f7ef; border-radius: 6rpx;
+  padding: 4rpx 12rpx;
+}
+.bi-self { font-size: 22rpx; color: #8a94a0; }

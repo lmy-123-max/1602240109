@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "医生工作台",
+  "usingComponents": {
+    "login-panel": "../../components/login-panel/login-panel"
+  }
+}

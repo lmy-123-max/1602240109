@@ -1,0 +1,105 @@
+<!--pages/booking/booking.wxml-->
+<view class="sect">① 选择门店</view>
+<view class="card store-row">
+  <view
+    wx:for="{{stores}}"
+    wx:key="id"
+    class="chip {{storeId === item.id ? 'chip-on' : ''}}"
+    data-id="{{item.id}}"
+    bindtap="onStore"
+  >{{item.name}}</view>
+</view>
+
+<view class="sect">② 选择医生</view>
+<view class="card">
+  <block wx:if="{{docLoading}}">
+    <view class="loading-tip">医生加载中...</view>
+  </block>
+  <block wx:else>
+    <view
+      wx:for="{{doctors}}"
+      wx:key="id"
+      class="doc {{doctorId === item.id ? 'doc-on' : ''}}"
+      data-id="{{item.id}}"
+      bindtap="onDoctor"
+    >
+      <view class="doc-avatar">{{item.name[0]}}</view>
+      <view class="doc-info">
+        <view class="doc-line"><text class="doc-name">{{item.name}}</text><text class="doc-title">{{item.title}}</text></view>
+        <view class="doc-spec">{{item.specialty}} · 从业 {{item.years}} 年 · ★ {{item.rating}}</view>
+      </view>
+      <view class="doc-check" wx:if="{{doctorId === item.id}}">✓</view>
+    </view>
+    <view class="empty" wx:if="{{!doctors.length}}">该门店暂无医生</view>
+  </block>
+</view>
+
+<block wx:if="{{doctorId}}">
+  <view class="sect">③ 选择日期</view>
+  <view class="card date-row">
+    <scroll-view scroll-x enable-flex>
+      <view class="date-wrap">
+        <view
+          wx:for="{{dates}}"
+          wx:key="date"
+          class="date {{date === item.date ? 'date-on' : ''}}"
+          data-date="{{item.date}}"
+          bindtap="onDate"
+        >
+          <view class="date-md">{{item.md}}</view>
+          <view class="date-wk">{{item.weekday}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="sect">④ 选择时段</view>
+  <view class="card">
+    <block wx:if="{{schLoading}}">
+      <view class="loading-tip">号源加载中...</view>
+    </block>
+    <block wx:else>
+      <view class="slots">
+        <view
+          wx:for="{{schedules}}"
+          wx:key="id"
+          class="slot {{selId === item.id ? 'slot-on' : ''}} {{item.remaining <= 0 ? 'slot-full' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onSlot"
+        >
+          <view class="slot-name">{{item.slotText}}</view>
+          <view class="slot-left">{{item.remaining > 0 ? '余 ' + item.remaining + ' 号' : '已约满'}}</view>
+        </view>
+      </view>
+      <view class="empty" wx:if="{{!schedules.length}}">该医生当日暂无号源，请换一天试试</view>
+    </block>
+  </view>
+
+  <view class="sect">⑤ 就诊人信息</view>
+  <view class="card">
+    <view class="fld">
+      <view class="fld-label">姓名</view>
+      <input class="fld-input" placeholder="请输入就诊人姓名" value="{{patientName}}" bindinput="onName" />
+    </view>
+    <view class="fld">
+      <view class="fld-label">手机号</view>
+      <input class="fld-input" type="number" placeholder="用于接收就诊提醒" value="{{patientPhone}}" bindinput="onPhone" />
+    </view>
+    <view class="rule">📌 预约需预付挂号费 ¥20，就诊时抵扣诊疗费；距就诊不足 2 小时取消收取 50% 违约金。</view>
+  </view>
+</block>
+
+<view class="confirm-bar" wx:if="{{doctorId && selId}}">
+  <view class="confirm-info">
+    <view class="confirm-doc">{{selDoctor.name}} · {{selDateText}} {{selSlotText}}</view>
+    <view class="confirm-store">{{curStore.name}} · 挂号费 ¥20</view>
+  </view>
+  <button class="btn-primary confirm-btn" loading="{{submitting}}" disabled="{{submitting}}" bindtap="onBook">立即预约</button>
+</view>
+
+<!-- 登录弹层 -->
+<view class="mask" wx:if="{{showLogin}}" bindtap="closeLogin"></view>
+<view class="login-sheet" wx:if="{{showLogin}}">
+  <view class="login-sheet-title">预约前请先登录</view>
+  <login-panel bind:signedin="onSignedIn" />
+</view>

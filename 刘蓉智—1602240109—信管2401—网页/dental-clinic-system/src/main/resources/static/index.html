@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>牙科诊所 · 就医服务</title>
+<style>
+:root{
+  --pri:#00a870; --pri-d:#008f5f; --pri-bg:#e8f8f0;
+  --blue:#1990ff; --warn:#ff8f1f; --danger:#fa5151; --gold:#f5a623;
+  --bg:#f4f6f8; --card:#fff; --text:#222; --muted:#8a919f; --line:#eef0f3;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#dfe4ea;color:var(--text)}
+.phone{max-width:430px;min-height:100vh;margin:0 auto;background:var(--bg);position:relative;box-shadow:0 0 30px rgba(0,0,0,.15)}
+.top{background:linear-gradient(135deg,var(--pri) 0%,var(--pri-d) 100%);color:#fff;padding:14px 18px 60px;border-radius:0 0 22px 22px;transition:background .3s}
+.top h1{font-size:18px;font-weight:600;display:flex;align-items:center;gap:8px}
+.top .sub{font-size:12px;opacity:.85;margin-top:3px}
+.tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;
+  display:flex;border-top:1px solid var(--line);z-index:50;padding:6px 0 10px}
+.tabbar button{flex:1;border:none;background:none;font-size:11px;color:var(--muted);cursor:pointer;padding-top:3px}
+.tabbar button .ico{font-size:22px;display:block}
+.tabbar button.on{color:var(--pri);font-weight:600}
+.pagebody{padding:0 14px 90px;margin-top:-46px}
+.grid4{background:var(--card);border-radius:14px;padding:16px 6px;display:grid;grid-template-columns:repeat(4,1fr);box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.gi{border:none;background:none;cursor:pointer;text-align:center;padding:6px 0;font-family:inherit}
+.gi .ic{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:23px;margin:0 auto 6px;color:#fff}
+.gi .nm{font-size:12.5px;font-weight:500}
+.sect-t{font-size:14px;font-weight:600;margin:16px 4px 8px;display:flex;align-items:center;gap:6px}
+.sect-t::before{content:'';width:4px;height:14px;background:var(--pri);border-radius:2px}
+.grid4x{background:var(--card);border-radius:14px;padding:14px 6px;display:grid;grid-template-columns:repeat(4,1fr);box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.card{background:var(--card);border-radius:14px;padding:14px;margin-top:10px;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.rowline{display:flex;align-items:center;gap:10px;padding:10px 2px;border-bottom:1px solid var(--line)}
+.rowline:last-child{border-bottom:none}
+.rowline .grow{flex:1;min-width:0}
+.rowline .t1{font-size:14px;font-weight:500}
+.rowline .t2{font-size:12px;color:var(--muted);margin-top:2px}
+.tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;white-space:nowrap}
+.t0{background:#fff7e8;color:var(--warn)}.t1{background:#e8f3ff;color:var(--blue)}
+.t2{background:#e8f8f0;color:#00a870}.t3{background:#eef0ff;color:#5b5bd6}
+.t4{background:#e8f8f0;color:var(--pri)}.t5{background:#ffeded;color:var(--danger)}.t6{background:#f0f0f0;color:#999}
+.btn{border:none;border-radius:18px;padding:7px 16px;font-size:13px;cursor:pointer;background:var(--pri);color:#fff;font-family:inherit}
+.btn.ghost{background:var(--pri-bg);color:var(--pri)}
+.btn.blue{background:var(--blue)}.btn.warn{background:var(--warn)}
+.btn.danger{background:var(--danger)}.btn.gray{background:#c8cdd4}
+.btn.blk{width:100%;padding:12px;font-size:15px;border-radius:22px}
+.btn.sm{padding:4px 12px;font-size:12px}
+select,input,textarea{border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px;outline:none;background:#fff;font-family:inherit;width:100%}
+select:focus,input:focus,textarea:focus{border-color:var(--pri)}
+.fld{margin-bottom:10px}
+.fld label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px}
+.frow{display:flex;gap:10px}.frow .fld{flex:1}
+.empty{text-align:center;color:var(--muted);font-size:13px;padding:26px 0}
+.banner{background:var(--card);border-radius:14px;padding:14px;display:flex;gap:12px;align-items:center;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.banner .bc{flex:1}
+.banner .bt{font-size:14px;font-weight:600}
+.banner .bd{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.6}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.kpi{background:var(--card);border-radius:14px;padding:14px;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.kpi .k{font-size:11.5px;color:var(--muted)}
+.kpi .v{font-size:22px;font-weight:700;margin-top:4px;color:var(--pri)}
+.kpi .v.bad{color:var(--danger)}.kpi .v.blue{color:var(--blue)}.kpi .v.warn{color:var(--warn)}
+.albox{background:#fff7e8;border:1px solid #ffe1ad;border-radius:12px;padding:10px 13px;font-size:12.5px;margin-top:10px;line-height:1.7}
+.albox b{color:var(--warn)}
+.msg{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:99;padding:10px 24px;border-radius:20px;color:#fff;font-size:13.5px;box-shadow:0 4px 16px rgba(0,0,0,.2);max-width:86%;animation:dr .25s}
+@keyframes dr{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}
+.msg.ok{background:var(--pri)}.msg.err{background:var(--danger)}
+.login{max-width:430px;min-height:100vh;margin:0 auto;background:linear-gradient(160deg,var(--pri) 0%,var(--pri-d) 42%,var(--bg) 42.2%);display:flex;flex-direction:column;justify-content:flex-end;transition:background .35s}
+.lg-card{background:var(--card);border-radius:22px 22px 0 0;padding:30px 24px 40px}
+.lg-card h3{font-size:20px;margin-bottom:4px}
+.lg-card p{font-size:12.5px;color:var(--muted);margin-bottom:20px}
+.accts{font-size:11.5px;color:var(--muted);background:#f7f9fc;border-radius:10px;padding:10px 12px;margin-top:16px;line-height:1.9}
+.pg{display:none}.pg.on{display:block}
+.mask{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:80;display:none;align-items:flex-end;justify-content:center}
+.mask.on{display:flex}
+.sheet{background:#fff;width:100%;max-width:430px;border-radius:20px 20px 0 0;padding:20px 18px 30px;max-height:82vh;overflow:auto}
+.sheet h3{font-size:16px;margin-bottom:12px}
+.paysel{display:flex;gap:10px;margin:12px 0}
+.paysel button{flex:1;border:2px solid var(--line);background:#fff;border-radius:12px;padding:12px;font-size:13px;cursor:pointer;font-family:inherit}
+.paysel button.on{border-color:var(--pri);background:var(--pri-bg);color:var(--pri);font-weight:600}
+.rolegrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:6px 0 8px}
+.rolegrid .rg{border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 6px;cursor:pointer;font-family:inherit;text-align:center;transition:all .2s}
+.rolegrid .rg:hover{border-color:#c8ced6}
+.rolegrid .rg.on{border-color:var(--pri);background:var(--pri-bg);box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.rolegrid .rg .ric{font-size:26px;line-height:1.2}
+.rolegrid .rg .rn{font-size:14px;font-weight:700;margin-top:2px}
+.rolegrid .rg .rd{font-size:10.5px;color:var(--muted);margin-top:3px}
+.rolegrid .rg.on .rn{color:var(--pri)}
+.roleNow{font-size:12px;background:var(--pri-bg);color:var(--pri);border-radius:9px;padding:7px 12px;margin-bottom:14px;font-weight:600;text-align:center;transition:all .3s}
+.dept{border:1.5px solid var(--line);background:#fff;border-radius:16px;padding:6px 13px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.dept.on{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:600}
+
+/* ============ 官网落地页（SaaS 官网风格） ============ */
+.landing{background:#fff;color:#1c2b28;min-height:100vh}
+.landing .wrap{max-width:1150px;margin:0 auto;padding:0 28px}
+.lnav{position:sticky;top:0;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid #edf2f0;z-index:60}
+.lnav .wrap{display:flex;align-items:center;height:62px;gap:26px}
+.lnav .logo{font-size:17px;font-weight:700;color:#0f7a5c;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.lnav .links{display:flex;gap:4px}
+.lnav .links a{color:#3d4a47;text-decoration:none;font-size:14px;padding:7px 14px;border-radius:8px;transition:.2s}
+.lnav .links a:hover{color:#0f7a5c;background:#eef8f3}
+.lnav .svc{margin-left:auto;text-align:right;font-size:11.5px;color:#8a919f;line-height:1.6;white-space:nowrap}
+.lnav .svc b{color:#0f7a5c;font-weight:600}
+.lnav .btnlogin{margin-left:16px;background:#0f7a5c;color:#fff;border:none;border-radius:20px;padding:8px 20px;font-size:13.5px;cursor:pointer;font-family:inherit}
+.lnav .btnlogin:hover{background:#0c6649}
+.lhero{background:linear-gradient(180deg,#f0fbf7 0%,#e6f6f0 68%,#fff 100%);position:relative;overflow:hidden}
+.lhero .wrap{display:flex;gap:34px;align-items:center;padding:58px 28px 70px}
+.lhero h1{font-size:38px;line-height:1.3;font-weight:800;color:#13211d;letter-spacing:.5px}
+.lhero h1 .hl{color:#00a870}
+.lhero .slogans{margin-top:16px;font-size:14.5px;color:#4c5a56;line-height:2.1}
+.lhero .slogans b{color:#0f7a5c;font-weight:600}
+.lhero .cta{margin-top:26px;display:flex;gap:14px}
+.lhero .cta button{border:none;border-radius:24px;padding:12px 26px;font-size:14.5px;cursor:pointer;font-family:inherit;font-weight:600}
+.lhero .cta .pri{background:#00a870;color:#fff;box-shadow:0 8px 20px rgba(0,168,112,.3)}
+.lhero .cta .pri:hover{background:#009462}
+.lhero .cta .dark{background:#3a4a63;color:#fff}
+.lhero .cta .dark:hover{background:#2f3d53}
+.lhero .lcol{display:flex;gap:18px;flex:0 0 auto}
+.vercard{background:#fff;border-radius:16px;width:236px;padding:22px 20px 20px;box-shadow:0 14px 34px rgba(23,66,54,.12);position:relative}
+.vercard::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;border-radius:16px 16px 0 0}
+.vercard.flag::before{background:linear-gradient(90deg,#00a870,#35d49a)}
+.vercard.pro::before{background:linear-gradient(90deg,#3a4a63,#64789b)}
+.vercard h3{font-size:17px;font-weight:700}
+.vercard ul{list-style:none;margin:14px 0 18px;padding:0}
+.vercard li{font-size:12.8px;color:#4c5a56;padding:5px 0;display:flex;align-items:center;gap:8px}
+.vercard li::before{content:'✓';color:#00a870;font-weight:700}
+.vercard.pro li::before{color:#3a4a63}
+.vercard button{width:100%;border:none;border-radius:22px;padding:10px;font-size:13.5px;cursor:pointer;font-family:inherit;font-weight:600;color:#fff}
+.vercard.flag button{background:#00a870}.vercard.flag button:hover{background:#009462}
+.vercard.pro button{background:#3a4a63}.vercard.pro button:hover{background:#2f3d53}
+.lstrip{background:#fff;border-bottom:1px solid #eef4f1}
+.lstrip .wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:26px 28px}
+.lstrip .it{text-align:center}
+.lstrip .it .tt{font-size:15.5px;font-weight:700;color:#13211d}
+.lstrip .it .dd{font-size:12.5px;color:#8a919f;margin-top:6px}
+.lsec{padding:52px 0 14px}
+.lsec .cap{text-align:center;font-size:26px;font-weight:800;color:#13211d}
+.lsec .sub{text-align:center;font-size:13.5px;color:#8a919f;margin-top:8px}
+.lfeats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}
+.lfeat{background:#f7fbf9;border:1px solid #e8f1ed;border-radius:16px;padding:22px;transition:.25s}
+.lfeat:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(23,66,54,.09)}
+.lfeat .ic{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;margin-bottom:12px}
+.lfeat h4{font-size:15px;font-weight:700}
+.lfeat p{font-size:12.8px;color:#5c6b66;line-height:1.9;margin-top:7px}
+.lroles{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:34px}
+.lrole{background:#fff;border:1px solid #e8f1ed;border-radius:16px;padding:20px 16px;text-align:center;transition:.25s}
+.lrole:hover{border-color:#7fd4b3;box-shadow:0 12px 26px rgba(23,66,54,.1)}
+.lrole .ric{font-size:34px}
+.lrole h4{font-size:15px;font-weight:700;margin-top:8px}
+.lrole p{font-size:12.3px;color:#8a919f;margin-top:6px;line-height:1.8}
+.lrole button{margin-top:14px;background:#eef8f3;color:#0f7a5c;border:none;border-radius:20px;padding:8px 22px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:600}
+.lrole button:hover{background:#0f7a5c;color:#fff}
+.lband{margin-top:50px;background:linear-gradient(120deg,#0c5e46,#0f7a5c 55%,#159b72);border-radius:18px;color:#fff;padding:30px 36px;display:flex;align-items:center;gap:20px}
+.lband .bt{font-size:20px;font-weight:700}
+.lband .bd{font-size:13px;opacity:.88;margin-top:6px;line-height:1.8}
+.lband button{margin-left:auto;background:#fff;color:#0f7a5c;border:none;border-radius:22px;padding:11px 26px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.lstats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:36px}
+.lstat{background:#f7fbf9;border-radius:14px;padding:18px;text-align:center}
+.lstat .v{font-size:26px;font-weight:800;color:#0f7a5c}
+.lstat .k{font-size:12.5px;color:#8a919f;margin-top:5px}
+.lfoot{background:#13211d;color:#9fb3ac;margin-top:56px}
+.lfoot .wrap{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:30px;padding:36px 28px 20px}
+.lfoot h5{color:#fff;font-size:14px;margin-bottom:10px}
+.lfoot p,.lfoot a{font-size:12.5px;line-height:2;color:#9fb3ac;text-decoration:none;display:block}
+.lfoot .cp{border-top:1px solid rgba(255,255,255,.08);text-align:center;font-size:11.5px;color:#6d7f79;padding:14px 0}
+.backhome{position:fixed;top:14px;left:16px;z-index:70;font-size:12.5px;color:#fff;text-decoration:none;background:rgba(15,122,92,.85);padding:6px 14px;border-radius:16px}
+@media (max-width:960px){
+  .lhero .wrap{flex-direction:column}
+  .lfeats,.lroles{grid-template-columns:repeat(2,1fr)}
+  .lfoot .wrap{grid-template-columns:1fr}
+  .lnav .svc{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- 管理后台入口 -->
+<a href="/admin.html" style="position:fixed;right:14px;bottom:12px;z-index:99;font-size:12px;color:#8a919f;text-decoration:none;background:rgba(255,255,255,.88);padding:5px 12px;border-radius:16px;border:1px solid #eef0f3;box-shadow:0 1px 4px rgba(0,0,0,.06)">⚙ 总部管理后台</a>
+
+<!-- ============ 官网落地页 ============ -->
+<div class="landing" id="landingView">
+  <nav class="lnav">
+    <div class="wrap">
+      <div class="logo">🦷 牙科连锁 · 口腔SaaS管理系统</div>
+      <div class="links">
+        <a href="#top" onclick="lpGo('top')">首页</a>
+        <a onclick="lpGo('sec-feats')">功能特性</a>
+        <a onclick="lpGo('sec-roles')">多端入口</a>
+        <a onclick="lpGo('sec-about')">关于我们</a>
+      </div>
+      <div class="svc">客服微信：<b>dental-svc001</b>　<b>dental-svc002</b><br>工作时间：工作日 09:00 - 18:00</div>
+      <button class="btnlogin" onclick="showLogin()">登录系统</button>
+    </div>
+  </nav>
+
+  <div class="lhero" id="top">
+    <div class="wrap">
+      <div style="flex:1;min-width:0">
+        <h1>牙科连锁<br><span class="hl">口腔SaaS管理系统</span></h1>
+        <div class="slogans">
+          <b>患者信息更安全</b> ｜ <b>预约时间更灵活</b> ｜ <b>电子病历更精细</b><br>
+          <b>技耗分离更合规</b> ｜ <b>耗材管理更方便</b> ｜ <b>财务经营更直观</b>
+        </div>
+        <div class="cta">
+          <button class="pri" onclick="showLogin('patient')">立即预约就诊</button>
+          <button class="dark" onclick="location.href='/admin.html'">进入管理后台</button>
+        </div>
+      </div>
+      <div class="lcol">
+        <div class="vercard flag">
+          <h3>门店版</h3>
+          <ul>
+            <li>门诊运营基础</li>
+            <li>患者预约登记</li>
+            <li>普通基础病历</li>
+            <li>耗材库存管理</li>
+            <li>简易经营报表</li>
+          </ul>
+          <button onclick="showLogin('storeAdmin')">立即开通门店版</button>
+        </div>
+        <div class="vercard pro">
+          <h3>旗舰版</h3>
+          <ul>
+            <li>专业合规进阶版</li>
+            <li>规范化病历</li>
+            <li>技耗分离</li>
+            <li>专科耗材库存管理</li>
+            <li>总部经营驾驶舱</li>
+          </ul>
+          <button onclick="showLogin('hqAdmin')">立即开通旗舰版</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lstrip">
+    <div class="wrap">
+      <div class="it"><div class="tt">简洁流畅</div><div class="dd">四步完成预约，老人小孩都会用</div></div>
+      <div class="it"><div class="tt">技耗分离</div><div class="dd">诊疗服务与耗材分开计价，收费透明合规</div></div>
+      <div class="it"><div class="tt">规范化病历</div><div class="dd">结构化电子病历，随时回溯就诊全记录</div></div>
+    </div>
+  </div>
+
+  <div class="lsec wrap" id="sec-feats">
+    <div class="cap">为什么选择我们</div>
+    <div class="sub">覆盖「预约 — 接诊 — 病历 — 缴费 — 复诊 — 经营」全流程的一体化口腔医疗平台</div>
+    <div class="lfeats">
+      <div class="lfeat"><div class="ic" style="background:#00a870">🔐</div><h4>患者信息更安全</h4><p>健康卡 + 电子档案统一管理，过敏史强制校验，敏感信息全链路留痕可审计。</p></div>
+      <div class="lfeat"><div class="ic" style="background:#1990ff">📅</div><h4>预约时间更灵活</h4><p>按门店、医生、时段自助选号，预付挂号费锁号，就诊前 2 小时外免费取消。</p></div>
+      <div class="lfeat"><div class="ic" style="background:#7b61ff">📖</div><h4>电子病历更精细</h4><p>主诉、诊断、牙位、处置单结构化录入，自动生成账单，复诊提醒不漏人。</p></div>
+      <div class="lfeat"><div class="ic" style="background:#f5a623">🧪</div><h4>技耗分离更合规</h4><p>诊疗项目服务费与耗材成本分账核算，符合医保与物价监管要求。</p></div>
+      <div class="lfeat"><div class="ic" style="background:#1a7f4f">💳</div><h4>医保定点更实惠</h4><p>补牙、根管、拔牙、牙周治疗等医保甲类全额报销，乙类报销 70%；账单自动拆分医保报销与个人自付，明白消费。</p></div>
+      <div class="lfeat"><div class="ic" style="background:#fa5151">📦</div><h4>耗材管理更方便</h4><p>供应商、采购、库存、消耗一条线管理，每颗耗材都能追溯到领用科室。</p></div>
+      <div class="lfeat"><div class="ic" style="background:#0f7a5c">📊</div><h4>财务经营更直观</h4><p>营收、取消率、号源利用率、医生提成自动核算，总部门店一屏尽览。</p></div>
+    </div>
+  </div>
+
+  <div class="lsec wrap" id="sec-roles">
+    <div class="cap">多端协同 · 四类角色独立入口</div>
+    <div class="sub">四类角色分账号登录，权限互相隔离；每一次进入系统都有登录留痕，安全可追溯</div>
+    <div class="lroles">
+      <div class="lrole"><div class="ric">🧑‍💼</div><h4>患者端</h4><p>预约挂号 · 就诊报到<br>门诊缴费 · 报告查询</p><button onclick="showLogin('patient')">立即体验</button></div>
+      <div class="lrole"><div class="ric">🦷</div><h4>牙医端</h4><p>接诊叫号 · 病历录入<br>排班管理 · 业绩提成</p><button onclick="showLogin('doctor')">医生进入</button></div>
+      <div class="lrole"><div class="ric">🏪</div><h4>门店管理员</h4><p>排班核销 · 账单核查<br>门店运营 · 基础数据</p><button onclick="showLogin('storeAdmin')">门店进入</button></div>
+      <div class="lrole"><div class="ric">🏢</div><h4>总部管理员</h4><p>资质终审 · 业绩核算<br>连锁经营 · 权限管理</p><button onclick="showLogin('hqAdmin')">总部进入</button></div>
+    </div>
+    <div class="lstats">
+      <div class="lstat"><div class="v">3 家</div><div class="k">连锁门店统一管理</div></div>
+      <div class="lstat"><div class="v">10+ 名</div><div class="k">执业医生分科接诊</div></div>
+      <div class="lstat"><div class="v">30+ 项</div><div class="k">治疗项目明码标价</div></div>
+      <div class="lstat"><div class="v">每日</div><div class="k">数据自动备份不丢失</div></div>
+    </div>
+    <div class="lband">
+      <div><div class="bt">数据会一直保存下去</div><div class="bd">本地文件数据库 + 每日自动备份 + 一键恢复 + CSV 导出，历史数据永不丢失，支撑门诊长期经营。</div></div>
+      <button onclick="location.href='/admin.html'">了解数据保障</button>
+    </div>
+  </div>
+
+  <div class="lfoot" id="sec-about">
+    <div class="wrap">
+      <div>
+        <h5>关于我们</h5>
+        <p>牙科连锁口腔SaaS管理系统是一套面向中大型牙科门诊的一体化信息平台，涵盖患者服务、医生接诊、门店运营与总部经营四大板块，让"看牙"这件事更简单、更透明、更规范。</p>
+      </div>
+      <div>
+        <h5>联系我们</h5>
+        <p>客服微信：dental-svc001<br>客服微信：dental-svc002<br>工作时间：工作日 09:00 - 18:00</p>
+      </div>
+      <div>
+        <h5>预约须知</h5>
+        <p>预付挂号费 20 元锁号<br>就诊前 2 小时外可免费取消<br>爽约将计入取消率并关闭号源</p>
+      </div>
+    </div>
+    <div class="cp">牙科连锁 · 口腔SaaS管理系统 © 2026 · 系统分析与设计课程实战项目<br>
+      合规声明：医保定点机构 · 明码标价 · 医保结算符合《医疗保障基金使用监督管理条例》 · 个人信息处理符合《个人信息保护法》 · 医疗广告合规 · 全部关键业务操作留痕可审计</div>
+  </div>
+</div>
+
+<!-- ============ 登录 ============ -->
+<div class="login" id="loginView" style="display:none">
+  <a class="backhome" href="javascript:void(0)" onclick="backToLanding()">← 返回官网首页</a>
+  <div style="flex:1"></div>
+  <div class="lg-card">
+    <h3>🦷 牙科诊所就医服务</h3>
+    <p>预约挂号 · 就诊报到 · 门诊缴费 · 报告查询</p>
+    <div class="fld" style="margin-bottom:2px"><label>第一步：选择登录身份（四类角色分账号登录）</label></div>
+    <div class="rolegrid" id="roleSel">
+      <button class="rg on" data-r="patient" onclick="pickRole('patient')"><div class="ric">🧑‍💼</div><div class="rn">患者端</div><div class="rd">预约挂号 · 缴费查报告</div></button>
+      <button class="rg" data-r="doctor" onclick="pickRole('doctor')"><div class="ric">🦷</div><div class="rn">牙医端</div><div class="rd">接诊录入 · 排班业绩</div></button>
+      <button class="rg" data-r="storeAdmin" onclick="pickRole('storeAdmin')"><div class="ric">🏪</div><div class="rn">门店管理员</div><div class="rd">排班核销 · 账单核查</div></button>
+      <button class="rg" data-r="hqAdmin" onclick="pickRole('hqAdmin')"><div class="ric">🏢</div><div class="rn">总部管理员</div><div class="rd">资质终审 · 业绩核算</div></button>
+    </div>
+    <div class="roleNow" id="roleNow">当前身份：🧑‍💼 患者端（演示账号 patient01）</div>
+    <div class="fld"><label>第二步：输入账号</label><input id="lgAccount" value="patient01" placeholder="请输入账号"></div>
+    <div class="fld"><label>第三步：输入密码</label><input id="lgPwd" type="password" value="123456"></div>
+    <button class="btn blk" onclick="doLogin()">登 录</button>
+    <div style="text-align:center;margin-top:11px;font-size:12.5px;color:var(--muted)">还没有账号？<a href="javascript:void(0)" onclick="showReg()" style="color:var(--pri);font-weight:700;text-decoration:none">患者 / 牙医 免费注册 →</a></div>
+    <div class="accts">
+      演示账号（密码均为 123456）：<br>
+      患者端：<b>patient01</b> / <b>patient02</b>　牙医端：<b>doctor01</b> ~ <b>doctor10</b>（各科室）<br>
+      门店管理员：<b>store101</b>　总部管理员：<b>hq001</b>　* 需与所选登录身份一致
+    </div>
+  </div>
+</div>
+
+<!-- ============ 注册（患者 / 牙医自助注册） ============ -->
+<div class="login" id="regView" style="display:none">
+  <a class="backhome" href="javascript:void(0)" onclick="backToLanding()">← 返回官网首页</a>
+  <div style="flex:1"></div>
+  <div class="lg-card">
+    <h3>📝 注册新账号</h3>
+    <p>患者注册即可预约挂号、缴费查报告；牙医注册后进入医生工作台，工号自动分配</p>
+    <div class="fld"><label>第一步：选择注册身份（两类身份均自助开通）</label></div>
+    <div class="rolegrid" id="regSel">
+      <button class="rg on" data-r="patient" onclick="pickReg('patient')"><div class="ric">🧑‍💼</div><div class="rn">患者</div><div class="rd">预约挂号 · 缴费查报告</div></button>
+      <button class="rg" data-r="doctor" onclick="pickReg('doctor')"><div class="ric">🦷</div><div class="rn">牙医</div><div class="rd">接诊录入 · 排班业绩</div></button>
+    </div>
+    <div class="fld"><label>第二步：设置登录账号</label><input id="rgAccount" placeholder="请设置登录账号（唯一）"></div>
+    <div class="frow">
+      <div class="fld"><label>第三步：设置密码（≥6 位）</label><input id="rgPwd" type="password" placeholder="登录密码"></div>
+      <div class="fld"><label>确认密码</label><input id="rgPwd2" type="password" placeholder="再次输入密码"></div>
+    </div>
+    <div class="frow">
+      <div class="fld"><label>真实姓名</label><input id="rgName" placeholder="请输入真实姓名"></div>
+      <div class="fld"><label>手机号</label><input id="rgPhone" placeholder="用于就诊通知"></div>
+    </div>
+    <div id="regPatient">
+      <div class="fld"><label>健康卡号（选填，留空自动生成）</label><input id="rgCard" placeholder="如 HC20260001"></div>
+    </div>
+    <div id="regDoctor" style="display:none">
+      <div class="frow">
+        <div class="fld"><label>职称</label><select id="rgTitle"><option>住院医师</option><option selected>主治医师</option><option>副主任医师</option><option>主任医师</option></select></div>
+        <div class="fld"><label>执业特长</label><input id="rgSpec" placeholder="如 种植/正畸/全科"></div>
+      </div>
+      <div class="frow">
+        <div class="fld"><label>执业证号（选填）</label><input id="rgPrac" placeholder="执业医师证书编号"></div>
+        <div class="fld"><label>归属门店（选填）</label><select id="rgStore"><option value="">暂不定</option></select></div>
+      </div>
+    </div>
+    <label style="display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--muted);line-height:1.7;margin:10px 0 4px;cursor:pointer">
+      <input type="checkbox" id="rgConsent" style="margin-top:3px">
+      <span>我已阅读并同意《门诊服务协议》与<b>《个人信息处理告知书》</b>：本门诊为医保定点机构，明码标价；您的个人信息依《个人信息保护法》仅用于就诊服务，可随时在患者端自助注销账户（注销后个人信息匿名化清除）。</span>
+    </label>
+    <button class="btn blk" onclick="doRegister()">注 册</button>
+    <div class="accts" id="regHint">注册即视为同意《门诊服务协议》；患者注册赠送健康卡并自动建档，牙医注册由资质审核留痕。</div>
+  </div>
+</div>
+
+<script>
+const API='/api';
+function toast(t,ok=true){const d=document.createElement('div');d.className='msg '+(ok?'ok':'err');d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2600)}
+async function api(p,opt={}){
+  const r=await fetch(API+p,{method:opt.method||'GET',headers:{'Content-Type':'application/json'},body:opt.body?JSON.stringify(opt.body):undefined});
+  const j=await r.json();
+  if(j.code!==200&&j.code!==0){toast(j.msg||'请求失败',false);throw new Error(j.msg)}
+  return j.data;
+}
+/* ================= 登录（四类角色分账号登录，严禁多角色共用账号） ================= */
+let loginRole='patient';
+const ROLEDEF={
+  patient:['patient01','患者'],
+  doctor:['doctor01','牙医'],
+  storeAdmin:['store101','门店管理员'],
+  hqAdmin:['hq001','总部管理员']
+};
+/* 每类角色独立主题色与独立门户页：患者绿 / 牙医蓝 / 门店橙 / 总部紫 */
+const ROLEHOME={
+  patient:   {url:'/patient.html', ico:'🧑‍💼', label:'患者服务门户'},
+  doctor:    {url:'/doctor.html',  ico:'🦷',  label:'医生工作台'},
+  storeAdmin:{url:'/manage.html',  ico:'🏪',  label:'运营管理端（门店）'},
+  hqAdmin:   {url:'/manage.html',  ico:'🏢',  label:'运营管理端（总部）'}
+};
+const ROLETHEME={
+  patient:   {pri:'#00a870',d:'#008f5f',bg:'#e8f8f0',ico:'🧑‍💼',label:'患者端'},
+  doctor:    {pri:'#1990ff',d:'#0f6fd1',bg:'#e8f2ff',ico:'🦷',label:'牙医端'},
+  storeAdmin:{pri:'#ff8f1f',d:'#e07600',bg:'#fff3e5',ico:'🏪',label:'门店管理员'},
+  hqAdmin:   {pri:'#7b61ff',d:'#5f48e0',bg:'#efeaff',ico:'🏢',label:'总部管理员'}
+};
+function applyTheme(r){
+  const t=ROLETHEME[r]||ROLETHEME.patient;
+  const rs=document.documentElement.style;
+  rs.setProperty('--pri',t.pri);
+  rs.setProperty('--pri-d',t.d);
+  rs.setProperty('--pri-bg',t.bg);
+}
+function pickRole(r){
+  loginRole=r;
+  const t=ROLETHEME[r];
+  document.querySelectorAll('#roleSel .rg').forEach(b=>b.classList.toggle('on',b.dataset.r===r));
+  document.getElementById('lgAccount').value=ROLEDEF[r][0];
+  document.getElementById('roleNow').textContent='当前身份：'+t.ico+' '+t.label+'（演示账号 '+ROLEDEF[r][0]+'，登录后进入'+ROLEHOME[r].label+'）';
+  applyTheme(r);
+}
+/* 官网落地页 ⇄ 登录页 切换 */
+function showLogin(role){
+  document.getElementById('landingView').style.display='none';
+  document.getElementById('loginView').style.display='flex';
+  if(role) pickRole(role);
+  window.scrollTo(0,0);
+}
+function backToLanding(){
+  document.getElementById('loginView').style.display='none';
+  document.getElementById('landingView').style.display='block';
+  window.scrollTo(0,0);
+}
+function lpGo(id){
+  const el=document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:'smooth'});
+}
+async function doLogin(){
+  const account=document.getElementById('lgAccount').value.trim(),password=document.getElementById('lgPwd').value;
+  try{
+    me=await api('/auth/login',{method:'POST',body:{account,password}});
+    if(me.role!==loginRole){
+      toast('登录身份不符：账号「'+account+'」是「'+(me.roleName||me.role)+'」，与所选「'+ROLEDEF[loginRole][1]+'」入口不一致（四类角色分账号登录，严禁多角色共用账号），请切换身份后重试',false);
+      me=null;return;
+    }
+    me.account=account;
+    /* 按角色分流：患者端 / 牙医端 / 门店与总部管理端 各自独立的桌面网页 */
+    sessionStorage.setItem('dental_me',JSON.stringify(me));
+    toast('登录成功，正在进入'+ROLEHOME[me.role].label+'…');
+    setTimeout(()=>{location.href=ROLEHOME[me.role].url},400);
+  }catch(e){}
+}
+/* ================= 注册（患者 / 牙医自助注册） ================= */
+let regRole='patient';
+function showReg(){
+  document.getElementById('loginView').style.display='none';
+  document.getElementById('regView').style.display='flex';
+  window.scrollTo(0,0);
+  if(regRole==='doctor'&&!document.getElementById('rgStore').options.length){
+    api('/common/stores').then(list=>{
+      document.getElementById('rgStore').innerHTML='<option value="">暂不定</option>'+
+        list.map(s=>'<option value="'+s.storeId+'">'+escStore(s.storeName)+'</option>').join('');
+    }).catch(()=>{});
+  }
+}
+function escStore(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function pickReg(r){
+  regRole=r;
+  document.querySelectorAll('#regSel .rg').forEach(b=>b.classList.toggle('on',b.dataset.r===r));
+  document.getElementById('regPatient').style.display=r==='patient'?'block':'none';
+  document.getElementById('regDoctor').style.display=r==='doctor'?'block':'none';
+  document.getElementById('regHint').textContent=r==='patient'
+    ?'注册即视为同意《门诊服务协议》；患者注册赠送健康卡并自动建档。'
+    :'牙医注册后工号自动分配（D 起始），初始提成比例 10%，执业资质可在牙医端补录。';
+}
+async function doRegister(){
+  if(!document.getElementById('rgConsent').checked){toast('请先阅读并勾选《个人信息处理告知书》同意栏',false);return}
+  const body={
+    account:document.getElementById('rgAccount').value.trim(),
+    password:document.getElementById('rgPwd').value,
+    realName:document.getElementById('rgName').value.trim(),
+    phone:document.getElementById('rgPhone').value.trim()
+  };
+  if(!body.account){toast('请设置登录账号',false);return}
+  if(body.password!==document.getElementById('rgPwd2').value){toast('两次输入的密码不一致',false);return}
+  if(!body.realName){toast('请填写真实姓名',false);return}
+  if(regRole==='patient'){
+    body.healthCardNo=document.getElementById('rgCard').value.trim();
+    await api('/auth/register',{method:'POST',body});
+  }else{
+    body.title=document.getElementById('rgTitle').value;
+    body.specialty=document.getElementById('rgSpec').value.trim();
+    body.practiceNo=document.getElementById('rgPrac').value.trim();
+    const sid=document.getElementById('rgStore').value;
+    body.homeStoreId=sid?+sid:null;
+    const d=await api('/auth/register/doctor',{method:'POST',body});
+    toast('牙医注册成功，工号 '+(d.jobNo||'已分配'));
+  }
+  /* 注册成功 → 回到登录页并自动选中对应身份 */
+  pickRole(regRole);
+  document.getElementById('lgAccount').value=body.account;
+  document.getElementById('lgPwd').value='';
+  ['rgAccount','rgPwd','rgPwd2','rgName','rgPhone','rgCard','rgSpec','rgPrac'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  document.getElementById('regView').style.display='none';
+  document.getElementById('loginView').style.display='flex';
+  toast('注册成功，请使用刚设置的账号登录');
+}
+/* 演示快捷登录：index.html?as=patient01&role=patient */
+(function(){
+  const q=new URLSearchParams(location.search);
+  if(q.get('as')){
+    if(q.get('role')) pickRole(q.get('role'));
+    document.getElementById('lgAccount').value=q.get('as');
+    showLogin(q.get('role')||'patient');
+  }
+})();
+</script>
+</body>
+</html>

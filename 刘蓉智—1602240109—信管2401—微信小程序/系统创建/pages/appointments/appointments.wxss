@@ -1,0 +1,21 @@
+/* pages/appointments/appointments.wxss */
+.tabs { display: flex; margin: 20rpx 24rpx 4rpx; background: #fff; border-radius: 20rpx; padding: 8rpx; }
+.tab { flex: 1; text-align: center; font-size: 26rpx; color: var(--muted); padding: 14rpx 0; border-radius: 14rpx; }
+.tab-on { background: var(--brand-light); color: var(--brand); font-weight: 600; }
+
+.appt-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12rpx; }
+.appt-doc { font-size: 30rpx; font-weight: 700; }
+.appt-title { font-size: 22rpx; color: var(--brand); font-weight: 500; margin-left: 8rpx; }
+.appt-line { font-size: 25rpx; color: var(--text); opacity: 0.75; margin-top: 8rpx; }
+.mono { font-family: Menlo, Consolas, monospace; }
+.appt-ops { display: flex; justify-content: flex-end; margin-top: 20rpx; flex-wrap: wrap; }
+.op { font-size: 24rpx; border-radius: 28rpx; padding: 10rpx 28rpx; margin-left: 16rpx; }
+.op-blue { background: var(--brand-light); color: var(--brand); }
+.op-green { background: var(--mint-light); color: var(--mint); }
+.op-red { background: var(--danger-light); color: var(--danger); }
+.retry { margin-top: 20rpx; width: 240rpx; }
+.bottom-space { height: 40rpx; }
+
+.login-wrap { text-align: center; margin-top: 60rpx; }
+.login-ico { font-size: 64rpx; margin-bottom: 12rpx; }
+.login-tip { color: var(--muted); font-size: 26rpx; margin-bottom: 28rpx; }

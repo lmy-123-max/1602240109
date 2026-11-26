@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>牙科连锁 · 管理后台</title>
+<style>
+:root{
+  --brand:#1a56d6; --brand-d:#1341a8; --brand-l:#3b74e6; --brand-bg:#e8effc;
+  --ink:#1b2320; --muted:#7c8a86; --line:#e4eaf3; --bg:#f2f6fb;
+  --warn:#d9822b; --danger:#d9534f; --teal:#0f9d76;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+button{font-family:inherit;cursor:pointer}
+/* ---------- 布局：门户式 ---------- */
+.app{display:flex;min-height:100vh}
+.side{width:230px;background:linear-gradient(185deg,#1e5ce4 0%,#1443b4 78%,#123a99 100%);color:#dce7ff;
+  display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;border-radius:0 20px 20px 0;overflow:hidden;z-index:30}
+.brand{padding:22px 18px 14px;display:flex;align-items:center;gap:10px}
+.brand .mark{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-size:21px}
+.brand .logo{font-size:15.5px;font-weight:700;color:#fff;line-height:1.35}
+.brand .sub{font-size:10.5px;color:#a8c0f2;letter-spacing:.4px}
+.nav{flex:1;overflow-y:auto;padding:4px 12px 18px}
+.nav .grp{font-size:11px;color:#9db9ec;padding:14px 12px 6px;letter-spacing:1.5px}
+.nav button{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;color:#dce7ff;
+  font-size:13.5px;padding:9px 12px;text-align:left;border-radius:11px;margin:1px 0;transition:.15s}
+.nav button:hover{background:rgba(255,255,255,.1);color:#fff}
+.nav button.on{background:rgba(255,255,255,.2);color:#fff;font-weight:600;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+.nav button .ic{width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:13.5px;flex:0 0 26px}
+.side-foot{padding:12px 18px;font-size:11px;color:#8aa6d8;border-top:1px solid rgba(255,255,255,.12)}
+.main{margin-left:230px;flex:1;min-width:0;display:flex;flex-direction:column}
+/* 顶栏：门户式（桌面切换 + 全局搜索 + 用户区） */
+.topbar{background:#fff;border-bottom:1px solid var(--line);padding:0 26px;display:flex;align-items:center;gap:16px;
+  position:sticky;top:0;z-index:20;height:58px}
+.desktabs{display:flex;gap:4px;background:#eef3fa;border-radius:20px;padding:4px}
+.desktabs button{border:none;background:none;border-radius:16px;padding:6px 16px;font-size:13px;color:#5b6b8c}
+.desktabs button.on{background:#fff;color:var(--brand);font-weight:600;box-shadow:0 1px 4px rgba(26,86,214,.18)}
+.gsearch{margin:0 auto;width:min(430px,34vw)}
+.gsearch input{width:100%;border:1px solid #e2e9f5;border-radius:20px;padding:8px 16px;font-size:13px;background:#f6f9fd;outline:none;color:var(--ink)}
+.gsearch input:focus{border-color:var(--brand-l);background:#fff;box-shadow:0 0 0 3px rgba(26,86,214,.08)}
+.gs-pop{position:fixed;top:56px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 34px rgba(16,42,100,.14);
+  z-index:90;overflow:hidden;min-width:300px;display:none}
+.gs-pop .gi{padding:9px 16px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:10px}
+.gs-pop .gi:hover{background:#f2f6fd}
+.gs-pop .gi .ic{font-size:15px}
+.gs-pop .gi .cat{margin-left:auto;font-size:11px;color:#9aa8c6}
+.topbar .right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.iconbtn{width:34px;height:34px;border-radius:50%;border:none;background:#f1f5fb;color:#5b6b8c;font-size:15px;display:flex;align-items:center;justify-content:center}
+.iconbtn:hover{background:#e3ebf7;color:var(--brand)}
+.who{display:flex;align-items:center;gap:10px}
+.who .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#3b74e6,#1a56d6);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+.who .nm{font-size:13px;font-weight:600;color:var(--ink)}
+.who .rl{font-size:11px;color:var(--muted)}
+.pgttl{padding:20px 26px 0}
+.pgttl h2{font-size:19px;font-weight:700;color:#13233f}
+.pgttl .desc{font-size:12.5px;color:var(--muted);margin-top:4px}
+.content{padding:18px 26px 40px}
+/* ---------- 组件 ---------- */
+.btn{border:none;border-radius:8px;padding:8px 15px;font-size:13px;background:var(--brand);color:#fff}
+.btn:hover{background:var(--brand-d)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.ghost:hover{background:#f6f9fd;border-color:#c9d6ec}
+.btn.sm{padding:5px 11px;font-size:12.5px;border-radius:7px}
+.btn.gray{background:#eef2f7;color:#4d5a70}
+.btn.gray:hover{background:#e3e9f2}
+.btn.danger{background:#fdf0ef;color:var(--danger)}
+.btn.danger:hover{background:#fbe3e1}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.card+.card{margin-top:16px}
+.card-h{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.card-h h3{font-size:14.5px;font-weight:600;color:#13233f}
+.card-h h3::before{content:'';width:4px;height:15px;background:var(--brand);border-radius:2px;margin-right:8px;display:inline-block;vertical-align:-2px}
+.card-h .hint{font-size:12px;color:var(--muted)}
+.card-h .act{margin-left:auto;display:flex;gap:8px;align-items:center}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.stat .lb{font-size:12.5px;color:var(--muted)}
+.stat .vl{font-size:26px;font-weight:700;margin-top:6px;letter-spacing:-.5px;color:#13233f}
+.stat .vl small{font-size:12px;font-weight:400;color:var(--muted);margin-left:4px}
+.stat .bar{height:3px;background:var(--brand-bg);margin-top:12px;border-radius:2px;overflow:hidden}
+.stat .bar i{display:block;height:100%;background:var(--brand-l)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:12px;color:var(--muted);font-weight:500;padding:9px 10px;background:#f7f9fd;
+  border-bottom:1px solid var(--line);white-space:nowrap;position:sticky;top:0}
+td{font-size:13px;padding:10px;border-bottom:1px solid #f1f4f9;vertical-align:middle}
+tbody tr:hover{background:#f8faff}
+.tw{overflow:auto;max-height:calc(100vh - 320px);border:1px solid var(--line);border-radius:10px}
+.empty{padding:40px 0;text-align:center;color:var(--muted);font-size:13px}
+.tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;line-height:1.7;white-space:nowrap}
+.ok{background:#e6f6ef;color:#0f8a5f}
+.off{background:#f0f2f2;color:#8a9a95}
+.warn{background:#fdf3e6;color:#b9711f}
+.bad{background:#fdf0ef;color:#c0453f}
+.info{background:#eaf1fc;color:#2b6ca8}
+.mono{font-family:consolas,monospace;font-size:12.5px;color:#4a5b70}
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+select,input[type=text],input[type=number],input[type=date],input[type=time],textarea{
+  border:1px solid #dbe3f0;border-radius:8px;padding:8px 11px;font-size:13px;outline:none;background:#fff;font-family:inherit;color:var(--ink)}
+select:focus,input:focus,textarea:focus{border-color:var(--brand-l);box-shadow:0 0 0 3px rgba(26,86,214,.1)}
+.grow{flex:1;min-width:0}
+/* ---------- 弹窗 ---------- */
+.mask{position:fixed;inset:0;background:rgba(15,26,48,.45);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+.mask.on{display:flex}
+.dlg{background:#fff;border-radius:14px;width:100%;max-width:560px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden}
+.dlg-h{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center}
+.dlg-h h3{font-size:15px}
+.dlg-h .x{margin-left:auto;background:none;border:none;color:var(--muted);font-size:20px;line-height:1}
+.dlg-b{padding:18px 20px;overflow-y:auto}
+.dlg-f{padding:14px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px;background:#f8fafd}
+.fld{margin-bottom:13px}
+.fld label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:5px}
+.fld input,.fld select,.fld textarea{width:100%}
+.frow{display:flex;gap:12px}.frow .fld{flex:1}
+.hintline{font-size:12px;color:var(--muted);line-height:1.7}
+/* ---------- 提示 ---------- */
+#toast{position:fixed;left:50%;top:22px;transform:translateX(-50%) translateY(-16px);background:#13233f;color:#fff;
+  padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:200;max-width:70vw}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.err{background:#a8382f}
+/* ---------- 登录 ---------- */
+.gate{position:fixed;inset:0;background:linear-gradient(140deg,#0f2f6e,#1e5ce4 55%,#123a99);display:flex;align-items:center;justify-content:center;z-index:300}
+.gate .box{width:352px;background:#fff;border-radius:16px;padding:28px 26px 24px;box-shadow:0 24px 60px rgba(6,20,50,.4)}
+.gate h1{font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px;color:#13233f}
+.gate p.t{font-size:12.5px;color:var(--muted);margin:6px 0 20px}
+.gate .fld input{width:100%}
+.gate .btn{width:100%;padding:11px;font-size:14px;margin-top:6px}
+.gate .tip{margin-top:14px;font-size:11.5px;color:var(--muted);line-height:1.7;background:#f4f8fe;padding:10px;border-radius:8px}
+/* 权限矩阵 */
+.matrix td.ck{text-align:center}
+.matrix input[type=checkbox]{width:15px;height:15px;accent-color:var(--brand);cursor:pointer}
+.storegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.store{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:#fff}
+.store .nm{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+.store .cd{font-size:11.5px;color:var(--muted);margin-top:2px;letter-spacing:.5px}
+.store .meta{font-size:12.5px;color:#5b6a80;margin-top:12px;line-height:1.9}
+.store .meta b{color:var(--ink);font-weight:600}
+.store .ops{margin-top:12px;display:flex;gap:8px}
+.notice{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fff}
+.notice+.notice{margin-top:10px}
+.notice .tt{font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px}
+.notice .cc{font-size:13px;color:#5b6a80;line-height:1.8;margin-top:8px}
+.notice .ft{font-size:11.5px;color:var(--muted);margin-top:10px;display:flex;gap:14px;align-items:center}
+/* 分页条 */
+.pager{display:flex;align-items:center;gap:10px;justify-content:flex-end;padding:12px 4px 2px;font-size:12.5px;color:var(--muted)}
+.pager button{padding:5px 12px;border:1px solid var(--line);background:#fff;border-radius:6px;cursor:pointer;color:#3f4d60;font-size:12.5px}
+.pager button:disabled{opacity:.45;cursor:not-allowed}
+.pager button:not(:disabled):hover{border-color:var(--brand);color:var(--brand)}
+/* 数据维护页 */
+.dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.dl .box{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:#fff}
+.dl .box h4{font-size:14px;margin:0 0 6px}
+.dl .box p{font-size:12.5px;color:var(--muted);line-height:1.8;margin:0 0 12px}
+.dl .box code{font-size:11.5px;background:#f3f6fc;padding:2px 6px;border-radius:4px;color:#3f4d60}
+.bk-name{font-family:Menlo,Consolas,monospace;font-size:12.5px}
+/* ---------- 门户工作台首页 ---------- */
+.wbanner{background:linear-gradient(120deg,#1a56d6,#2f6ce8 55%,#3b74e6);border-radius:16px;color:#fff;padding:24px 28px;
+  display:flex;align-items:center;gap:18px;box-shadow:0 14px 30px rgba(26,86,214,.22)}
+.wbanner .wt{font-size:21px;font-weight:800}
+.wbanner .wd{font-size:12.5px;opacity:.88;margin-top:6px;line-height:1.7}
+.wbanner .btns{margin-left:auto;display:flex;gap:10px}
+.wbanner .btns button{border:none;border-radius:20px;padding:9px 20px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:600}
+.wbanner .btns .b1{background:#fff;color:#1a56d6}
+.wbanner .btns .b2{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.4)}
+.appchips{display:flex;gap:8px;margin:18px 0 14px;flex-wrap:wrap}
+.appchips button{border:none;background:#fff;border:1px solid var(--line);border-radius:20px;padding:7px 18px;font-size:13px;color:#5b6b8c;cursor:pointer;font-family:inherit}
+.appchips button.on{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+.appgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:14px}
+.appcard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 16px;cursor:pointer;transition:.2s;position:relative}
+.appcard:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(16,42,100,.12);border-color:#c6d6f0}
+.appcard .aic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:21px;color:#fff;margin-bottom:11px}
+.appcard .nm{font-size:14px;font-weight:700;color:#13233f}
+.appcard .ds{font-size:11.8px;color:#8a95ab;margin-top:5px;line-height:1.65;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.appcard .go{position:absolute;top:14px;right:14px;font-size:11px;color:#b9c6de;opacity:0;transition:.2s}
+.appcard:hover .go{opacity:1;color:var(--brand)}
+.quickline{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+.quickline button{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 16px;font-size:12.8px;color:#3d4a63;cursor:pointer;font-family:inherit}
+.quickline button:hover{border-color:var(--brand);color:var(--brand)}
+</style>
+</head>
+<body>
+
+<div class="gate" id="gate">
+  <div class="box">
+    <h1>🦷 牙科连锁 · 管理门户</h1>
+    <p class="t">统一工作台：门店、人员、项目、权限与经营数据的集中管理入口</p>
+    <div class="fld"><label>账号</label><input id="gAcc" value="hq001" autocomplete="username"></div>
+    <div class="fld"><label>密码</label><input id="gPwd" type="password" value="123456" autocomplete="current-password"></div>
+    <button class="btn" id="gBtn">进入工作台</button>
+    <div class="tip">演示账号 hq001 / 123456。患者端与门店端的日常业务请回 <a href="/index.html" style="color:#1a56d6">主系统</a> 操作；你的每次进入都会写入系统日志留痕。</div>
+  </div>
+</div>
+
+<div class="app" id="app" style="display:none">
+  <aside class="side">
+    <div class="brand">
+      <div class="mark">🦷</div>
+      <div>
+        <div class="logo">牙科连锁<br><span class="sub">管理门户 · UNIFIED PORTAL</span></div>
+      </div>
+    </div>
+    <nav class="nav" id="nav">
+      <div class="grp">运营协同</div>
+      <button data-v="dashboard" class="on"><span class="ic">◎</span>工作台首页</button>
+      <button data-v="appointments"><span class="ic">📅</span>预约管理</button>
+      <button data-v="patients"><span class="ic">👤</span>患者档案</button>
+      <button data-v="bills"><span class="ic">💰</span>收费单据</button>
+      <div class="grp">医疗资源</div>
+      <button data-v="doctors"><span class="ic">🦷</span>医生团队</button>
+      <button data-v="chairs"><span class="ic">🛏</span>牙椅设备</button>
+      <button data-v="items"><span class="ic">💉</span>治疗项目</button>
+      <button data-v="suppliers"><span class="ic">📦</span>供应商</button>
+      <button data-v="quals"><span class="ic">✅</span>资质审核</button>
+      <div class="grp">门店运营</div>
+      <button data-v="stores"><span class="ic">🏠</span>门店管理</button>
+      <button data-v="calendar"><span class="ic">🗓</span>营业日历</button>
+      <button data-v="costs"><span class="ic">🧾</span>运营成本</button>
+      <div class="grp">系统中心</div>
+      <button data-v="users"><span class="ic">👥</span>人员与账号</button>
+      <button data-v="roles"><span class="ic">🔐</span>角色与权限</button>
+      <button data-v="logs"><span class="ic">📋</span>系统日志</button>
+      <button data-v="notices"><span class="ic">📢</span>公告管理</button>
+      <button data-v="data"><span class="ic">💾</span>数据备份</button>
+      <button data-v="export"><span class="ic">⬇</span>数据导出</button>
+    </nav>
+    <div class="side-foot">牙科连锁门户 · 数据库设计课程项目</div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="desktabs">
+        <button class="on" id="tabUnified">统一工作台</button>
+        <button id="tabPersonal">个人工作台</button>
+      </div>
+      <div class="gsearch">
+        <input id="gSearch" type="text" placeholder="🔍 搜功能、搜数据，一键直达" autocomplete="off">
+      </div>
+      <div class="gs-pop" id="gsPop"></div>
+      <div class="right">
+        <button class="iconbtn" id="btnRefresh" title="刷新">⟳</button>
+        <button class="iconbtn" title="消息" onclick="setView('notices')">🔔</button>
+        <div class="who">
+          <div class="avatar" id="whoAvatar">总</div>
+          <div><div class="nm" id="whoName">—</div><div class="rl">总部管理员 · 统一工作台</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="pgttl">
+      <h2 id="pgTitle">工作台首页</h2>
+      <div class="desc" id="pgDesc">连锁门店的关键指标与应用入口</div>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<div class="mask" id="mask">
+  <div class="dlg">
+    <div class="dlg-h"><h3 id="dlgTitle">编辑</h3><button class="x" id="dlgX">×</button></div>
+    <div class="dlg-b" id="dlgBody"></div>
+    <div class="dlg-f">
+      <button class="btn ghost" id="dlgCancel">取消</button>
+      <button class="btn" id="dlgOk">保存</button>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+/* ==================== 基础设施 ==================== */
+const API = '/api';
+const state = { me: null, stores: [], doctors: [], items: [], suppliers: [], users: [], roles: [], perms: [], rolePerms: [] };
+
+function toast(msg, ok = true) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'on' + (ok ? '' : ' err');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(() => t.className = '', 2400);
+}
+
+async function api(path, opt = {}) {
+  const o = { method: opt.method || 'GET' };
+  if (opt.body !== undefined) {
+    o.headers = { 'Content-Type': 'application/json' };
+    o.body = JSON.stringify(opt.body);
+  }
+  let res, json;
+  try { res = await fetch(API + path, o); } catch (e) { throw new Error('无法连接服务，请确认后端已启动'); }
+  try { json = await res.json(); } catch (e) { throw new Error('服务返回异常（HTTP ' + res.status + '）'); }
+  if (json.code !== 0) throw new Error(json.msg || '请求失败');
+  return json.data;
+}
+
+const esc = s => String(s === null || s === undefined ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const money = v => v === null || v === undefined ? '-' : '¥ ' + Number(v).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const dateOf = v => v ? String(v).slice(0, 10) : '-';
+const genderTxt = g => g === 1 ? '男' : g === 0 ? '女' : '-';
+
+function tag(text, cls) { return '<span class="tag ' + cls + '">' + text + '</span>'; }
+
+/* 数据字典 */
+const APPT_STATUS = { 0: ['已提交', 'info'], 1: ['已确认', 'ok'], 2: ['已到诊', 'info'], 3: ['诊疗中', 'warn'], 4: ['已完成', 'off'], 5: ['已取消', 'bad'], 6: ['爽约', 'bad'] };
+const BILL_STATUS = { 0: ['待支付', 'warn'], 1: ['已支付', 'ok'], 2: ['已开票', 'info'], 3: ['部分退款', 'off'], 4: ['全额退款', 'bad'] };
+const CHAIR_STATUS = { 1: ['在用', 'ok'], 2: ['维修', 'warn'], 3: ['报废', 'bad'] };
+const AUDIT_STATUS = { 0: ['待初审', 'warn'], 1: ['初审通过', 'info'], 2: ['终审通过', 'ok'], 3: ['已驳回', 'bad'] };
+const DAY_TYPE = { 1: ['正常营业', 'ok'], 2: ['节假日', 'info'], 3: ['休息', 'off'] };
+
+function st(map, v) {
+  const d = map[v] || ['未知', 'off'];
+  return tag(d[0], d[1]);
+}
+
+/* 表格渲染 */
+function table(cols, rows, emptyText) {
+  if (!rows || !rows.length) return '<div class="empty">' + (emptyText || '暂无数据') + '</div>';
+  let h = '<div class="tw"><table><thead><tr>';
+  cols.forEach(c => h += '<th' + (c.w ? ' style="width:' + c.w + '"' : '') + '>' + c.t + '</th>');
+  h += '</tr></thead><tbody>';
+  rows.forEach(r => {
+    h += '<tr>';
+    cols.forEach(c => h += '<td>' + c.r(r) + '</td>');
+    h += '</tr>';
+  });
+  return h + '</tbody></table></div>';
+}
+
+/* 弹窗表单 */
+function modal(title, fields, onOk) {
+  const mask = document.getElementById('mask');
+  document.getElementById('dlgTitle').textContent = title;
+  let h = '';
+  fields.forEach((f, i) => {
+    const id = 'f_' + i;
+    f._id = id;
+    if (f.type === 'row') {
+      h += '<div class="frow">';
+      f.fields.forEach(sub => {
+        const sid = 'f_' + i + '_' + Math.random().toString(36).slice(2, 6);
+        sub._id = sid;
+        h += '<div class="fld"><label>' + sub.label + '</label>' + control(sub) + '</div>';
+      });
+      h += '</div>';
+    } else {
+      h += '<div class="fld"><label>' + f.label + '</label>' + control(f) + '</div>';
+    }
+  });
+  if (fields.some(f => f.note)) h += '<div class="hintline">' + fields.filter(f => f.note).map(f => f.note).join('<br>') + '</div>';
+  document.getElementById('dlgBody').innerHTML = h;
+  mask.classList.add('on');
+
+  const close = () => { mask.classList.remove('on'); document.getElementById('dlgOk').onclick = null; };
+  document.getElementById('dlgX').onclick = close;
+  document.getElementById('dlgCancel').onclick = close;
+  document.getElementById('dlgOk').onclick = async () => {
+    const vals = {};
+    let fieldList = [];
+    fields.forEach(f => { if (f.type === 'row') fieldList = fieldList.concat(f.fields); else fieldList.push(f); });
+    for (const f of fieldList) {
+      const el = document.getElementById(f._id);
+      vals[f.key] = f.type === 'number' ? (el.value === '' ? null : Number(el.value)) : el.value.trim();
+      if (f.required && (vals[f.key] === '' || vals[f.key] === null)) { toast(f.label + ' 不能为空', false); el.focus(); return; }
+    }
+    try {
+      await onOk(vals);
+      close();
+    } catch (e) { toast(e.message, false); }
+  };
+}
+
+function control(f) {
+  if (f.type === 'select') {
+    return '<select id="' + f._id + '">' + f.options.map(o =>
+      '<option value="' + o.v + '"' + (String(f.value) === String(o.v) ? ' selected' : '') + '>' + o.t + '</option>').join('') + '</select>';
+  }
+  if (f.type === 'textarea') return '<textarea id="' + f._id + '" rows="4">' + esc(f.value || '') + '</textarea>';
+  return '<input id="' + f._id + '" type="' + (f.type || 'text') + '" value="' + esc(f.value === undefined || f.value === null ? '' : f.value) + '"' +
+    (f.placeholder ? ' placeholder="' + f.placeholder + '"' : '') + (f.step ? ' step="' + f.step + '"' : '') + '>';
+}
+
+/* 视图注册表 */
+const VIEWS = {};
+const META = {
+  dashboard: ['工作台首页', '连锁经营关键指标与应用服务入口'],
+  appointments: ['预约管理', '按门店与状态查看全部预约记录'],
+  patients: ['患者档案', '患者基本信息、就诊门店与过敏记录数'],
+  bills: ['收费单据', '收费单状态与开票处理'],
+  stores: ['门店管理', '门店档案、牙椅与医生数量'],
+  doctors: ['医生团队', '医生执业信息、人员增减与提成比例'],
+  chairs: ['牙椅设备', '设备台账、折旧与单次使用成本'],
+  items: ['治疗项目', '项目编码、定价与材料成本'],
+  suppliers: ['供应商', '设备与耗材供应商档案'],
+  quals: ['资质审核', '医师资质证书与审核状态'],
+  calendar: ['营业日历', '门店营业日与开闭诊时间'],
+  users: ['人员与账号', '工作人员增减、账号状态与角色归属'],
+  roles: ['角色与权限', '角色授权矩阵，勾选即生效'],
+  logs: ['系统日志', '进入留痕 + 增减操作留痕：谁在何时增/删/停用/注销了什么'],
+  costs: ['运营成本', '按门店与季度录入房租、人力与折旧'],
+  notices: ['公告管理', '面向患者的公告发布与下架'],
+  data: ['数据备份', '每日自动备份，支持手动备份、下载与恢复'],
+  export: ['数据导出', '按条件导出患者、预约与收费单，Excel 可直接打开']
+};
+/* 应用服务卡片（门户首页宫格）：每个功能独立成卡，点卡片直达模块 */
+const APPS = [
+  { v: 'appointments', ic: '📅', bg: '#1a56d6', cat: '运营协同', ds: '今日确认、到院核销、全量预约检索' },
+  { v: 'patients', ic: '👤', bg: '#0f9d76', cat: '运营协同', ds: '患者档案、健康卡与过敏记录' },
+  { v: 'bills', ic: '💰', bg: '#d9822b', cat: '运营协同', ds: '收费单、开票与退费状态' },
+  { v: 'doctors', ic: '🦷', bg: '#3b74e6', cat: '医疗资源', ds: '医生增减、执业信息与提成' },
+  { v: 'chairs', ic: '🛏', bg: '#5b5bd6', cat: '医疗资源', ds: '牙椅台账、折旧与使用成本' },
+  { v: 'items', ic: '💉', bg: '#0f7a5c', cat: '医疗资源', ds: '价目表与材料成本维护' },
+  { v: 'suppliers', ic: '📦', bg: '#8a6bd6', cat: '医疗资源', ds: '耗材与设备供应商名录' },
+  { v: 'quals', ic: '✅', bg: '#2b8bd3', cat: '医疗资源', ds: '医师资质证书审核与到期提醒' },
+  { v: 'stores', ic: '🏠', bg: '#e05656', cat: '门店运营', ds: '门店档案、牙椅与医生配置' },
+  { v: 'calendar', ic: '🗓', bg: '#d3892b', cat: '门店运营', ds: '营业日、节假日与开闭诊时间' },
+  { v: 'costs', ic: '🧾', bg: '#c2589b', cat: '门店运营', ds: '房租、人力与折旧分季核算' },
+  { v: 'users', ic: '👥', bg: '#1a56d6', cat: '系统中心', ds: '工作人员增减、禁用与密码重置' },
+  { v: 'roles', ic: '🔐', bg: '#40495e', cat: '系统中心', ds: '角色授权矩阵，勾选即生效' },
+  { v: 'logs', ic: '📋', bg: '#5b7d9e', cat: '系统中心', ds: '进入留痕、增减操作留痕与注销审计' },
+  { v: 'notices', ic: '📢', bg: '#d3b02b', cat: '系统中心', ds: '公告发布与下架，患者端同步' },
+  { v: 'data', ic: '💾', bg: '#2f9ec4', cat: '系统中心', ds: '自动备份、下载与一键恢复' },
+  { v: 'export', ic: '⬇', bg: '#6d9e2f', cat: '系统中心', ds: '患者、预约、账单 CSV 导出' }
+];
+
+/* 分页（大列表按 20 条/页，避免几千条一次性渲染卡顿） */
+const PAGE = { size: 20, cur: {} };
+window.__rerender = window.__rerender || {};
+function paged(key, cols, list, emptyText) {
+  const max = Math.max(1, Math.ceil(list.length / PAGE.size));
+  if (!PAGE.cur[key] || PAGE.cur[key] > max) PAGE.cur[key] = 1;
+  const p = PAGE.cur[key];
+  const slice = list.slice((p - 1) * PAGE.size, p * PAGE.size);
+  let h = table(cols, slice, emptyText || '没有匹配记录');
+  h += '<div class="pager">';
+  if (list.length > PAGE.size) {
+    h += '<button ' + (p <= 1 ? 'disabled' : '') + ' onclick="pageGo(\'' + key + '\',-1)">上一页</button>' +
+      '<span>第 ' + p + ' / ' + max + ' 页 · 共 ' + list.length + ' 条</span>' +
+      '<button ' + (p >= max ? 'disabled' : '') + ' onclick="pageGo(\'' + key + '\',1)">下一页</button>';
+  } else {
+    h += '<span>共 ' + list.length + ' 条</span>';
+  }
+  return h + '</div>';
+}
+function pageGo(key, d) {
+  PAGE.cur[key] = Math.max(1, (PAGE.cur[key] || 1) + d);
+  if (window.__rerender && window.__rerender[key]) window.__rerender[key]();
+}
+
+function setView(v) {
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  const m = META[v] || ['管理', ''];
+  document.getElementById('pgTitle').textContent = m[0];
+  document.getElementById('pgDesc').textContent = m[1];
+  location.hash = v;
+  document.getElementById('content').innerHTML = '<div class="empty">加载中…</div>';
+  VIEWS[v]().catch(e => {
+    document.getElementById('content').innerHTML = '<div class="empty">' + esc(e.message) + '</div>';
+  });
+}
+
+/* ==================== 登录 ==================== */
+document.getElementById('gBtn').onclick = async () => {
+  const acc = document.getElementById('gAcc').value.trim();
+  const pwd = document.getElementById('gPwd').value;
+  try {
+    const d = await api('/auth/login', { method: 'POST', body: { account: acc, password: pwd } });
+    if (d.role !== 'hqAdmin' && d.role !== 'admin') {
+      toast('该账号不是总部管理员，无法进入管理后台', false);
+      return;
+    }
+    state.me = d;
+    const nm = (d.user && (d.user.realName || d.user.account)) || acc;
+    document.getElementById('whoName').textContent = nm + '（' + (d.roleName || '总部管理员') + '）';
+    document.getElementById('whoAvatar').textContent = nm.slice(0, 1);
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    const v = (location.hash || '#dashboard').slice(1);
+    setView(META[v] ? v : 'dashboard');
+  } catch (e) { toast(e.message, false); }
+};
+document.getElementById('gPwd').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('gBtn').click(); });
+
+document.getElementById('nav').addEventListener('click', e => {
+  const b = e.target.closest('button[data-v]');
+  if (b) setView(b.dataset.v);
+});
+document.getElementById('btnRefresh').onclick = () => {
+  const cur = (location.hash || '#dashboard').slice(1);
+  setView(cur);
+  toast('已刷新');
+};
+/* 桌面切换（统一工作台 / 个人工作台）：个人工作台定位到与自己相关的模块 */
+document.getElementById('tabUnified').onclick = function () {
+  this.classList.add('on'); document.getElementById('tabPersonal').classList.remove('on');
+  setView('dashboard');
+};
+document.getElementById('tabPersonal').onclick = function () {
+  this.classList.add('on'); document.getElementById('tabUnified').classList.remove('on');
+  toast('已切换到个人工作台：进入系统日志可查看你的进入记录');
+  setView('logs');
+};
+/* 全局搜索：输入功能名，一键直达对应模块 */
+document.getElementById('gSearch').addEventListener('input', function () {
+  const kw = this.value.trim();
+  const pop = document.getElementById('gsPop');
+  if (!kw) { pop.style.display = 'none'; return; }
+  const hits = Object.keys(META).filter(v => META[v][0].includes(kw) || (META[v][1] || '').includes(kw)).slice(0, 8);
+  if (!hits.length) { pop.style.display = 'none'; return; }
+  const me = state.me && state.me.user ? state.me.user : null;
+  const left = me ? (document.getElementById('gSearch').getBoundingClientRect().left) : 300;
+  pop.innerHTML = hits.map(v => {
+    const a = APPS.find(x => x.v === v);
+    return '<div class="gi" onclick="gsGo(\'' + v + '\')"><span class="ic">' + (a ? a.ic : '◎') + '</span>' + META[v][0] +
+      '<span class="cat">' + (a ? a.cat : '') + '</span></div>';
+  }).join('');
+  pop.style.display = 'block';
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('#gSearch') && !e.target.closest('#gsPop')) {
+    document.getElementById('gsPop').style.display = 'none';
+  }
+});
+function gsGo(v) {
+  document.getElementById('gsPop').style.display = 'none';
+  document.getElementById('gSearch').value = '';
+  setView(v);
+}
+
+/* 公共数据加载 */
+async function loadBase() {
+  if (!state.stores.length) state.stores = await api('/admin/stores');
+  if (!state.doctors.length) state.doctors = await api('/admin/doctors');
+  if (!state.items.length) state.items = await api('/admin/items');
+  if (!state.suppliers.length) state.suppliers = await api('/admin/suppliers');
+}
+function storeName(id) {
+  const s = state.stores.find(x => x.storeId === id);
+  return s ? s.storeName : '-';
+}
+
+/* ==================== 工作台首页（门户） ==================== */
+let appFilter = '全部';
+VIEWS.dashboard = async () => {
+  const d = await api('/admin/dashboard');
+  await loadBase();
+  const appts = await api('/admin/appointments');
+  const today = new Date().toISOString().slice(0, 10);
+  const todayAppts = appts.filter(a => a.visitDate === today);
+  const pending = appts.filter(a => a.status === 0 || a.status === 1).length;
+  let ovr = null;
+  try { ovr = await api('/stats/overview'); } catch (e) {}
+  let logs = null;
+  try { logs = await api('/admin/login-logs?limit=60'); } catch (e) {}
+
+  const hname = (state.me && state.me.user && state.me.user.realName) || '管理员';
+  let h = '<div class="wbanner"><div>' +
+    '<div class="wt">' + hname + '，欢迎回来 👋</div>' +
+    '<div class="wd">今天是 ' + today + ' · 门店 <b>' + d.stores + '</b> 家 · 在册医生 <b>' + d.doctors + '</b> 人 · 今日预约 <b>' + todayAppts.length + '</b> 单，待处理 <b>' + pending + '</b> 件</div></div>' +
+    '<div class="btns"><button class="b1" onclick="setView(\'appointments\')">处理今日预约</button>' +
+    '<button class="b2" onclick="setView(\'users\')">人员管理</button></div></div>';
+
+  const cards = [['连锁门店', d.stores, '家'], ['在册医生', d.doctors, '人'], ['可用牙椅', d.chairs, '台'],
+    ['患者档案', d.patients, '份'], ['系统账号', d.users, '个'], ['预约总量', d.appointments, '单']];
+  if (ovr) cards.push(['累计营收', money(ovr.paidRevenue), '元'], ['医保统筹报销', money(ovr.insuranceRevenue || 0), '元'],
+    ['个人自付收入', money(ovr.selfRevenue || 0), '元'], ['预约取消率', ovr.cancelRate, '%（目标≤8%）'], ['号源利用率', ovr.quotaUsageRate, '%']);
+  h += '<div class="stats" style="margin-top:16px">';
+  cards.forEach((c, i) => {
+    h += '<div class="stat"><div class="lb">' + c[0] + '</div><div class="vl">' + c[1] + '<small>' + c[2] + '</small></div>' +
+      '<div class="bar"><i style="width:' + (30 + (i * 13) % 60) + '%"></i></div></div>';
+  });
+  h += '</div>';
+
+  /* 应用服务宫格：每个环节独立成卡 */
+  const cats = ['全部'].concat([...new Set(APPS.map(a => a.cat))]);
+  h += '<div class="appchips" id="appChips">' + cats.map(c =>
+    '<button class="' + (c === appFilter ? 'on' : '') + '" onclick="appFilter=this.textContent.trim();renderApps()">' + c + '</button>').join('') + '</div>';
+  h += '<div class="appgrid" id="appGrid"></div>';
+  h += '<div class="quickline">' +
+    '<button onclick="setView(\'appointments\')">📅 今日待确认</button>' +
+    '<button onclick="setView(\'bills\')">💰 待开票账单</button>' +
+    '<button onclick="setView(\'quals\')">✅ 待审资质</button>' +
+    '<button onclick="setView(\'data\')">💾 立即备份</button>' +
+    '<button onclick="setView(\'logs\')">📋 查看谁登录过</button>' +
+    '</div>';
+
+  /* 最近进入留痕 */
+  if (logs) {
+    h += '<div class="card" style="margin-top:16px"><div class="card-h"><h3>最近进入系统</h3>' +
+      '<span class="hint">每一次登录（含失败尝试）都会留痕 · 今日进入 ' + logs.todayCount + ' 次 / 累计 ' + logs.total + ' 次</span>' +
+      '<div class="act"><button class="btn ghost sm" onclick="setView(\'logs\')">全部日志</button></div></div>';
+    h += table([
+      { t: '时间', r: r => String(r.loginTime).replace('T', ' ').slice(0, 19) },
+      { t: '账号', r: r => '<span class="mono">' + esc(r.account || '-') + '</span>' },
+      { t: '姓名', r: r => esc(r.realName || '-') },
+      { t: '身份', r: r => (r.roleName ? tag(r.roleName, 'info') : tag('未识别', 'off')) },
+      { t: 'IP', r: r => '<span class="mono">' + esc(r.ip || '-') + '</span>' },
+      { t: '结果', r: r => r.success === 1 ? tag('进入成功', 'ok') : tag('失败：' + (r.failReason || '-'), 'bad') }
+    ], (logs.items || []).slice(0, 8), '还没有登录记录');
+    h += '</div>';
+  }
+
+  h += '<div class="card"><div class="card-h"><h3>最近预约</h3><span class="hint">按就诊日期倒序，最多 8 条</span>' +
+    '<div class="act"><button class="btn ghost sm" onclick="setView(\'appointments\')">查看全部</button></div></div>';
+  h += table([
+    { t: '预约号', r: r => '<span class="mono">' + esc(r.appointmentNo) + '</span>' },
+    { t: '患者', r: r => esc(r.patientName) },
+    { t: '医生', r: r => esc(r.doctorName) },
+    { t: '就诊日期', r: r => dateOf(r.visitDate) + '　' + esc(r.timeSlot || '') },
+    { t: '门店', r: r => esc(storeName(r.storeId)) },
+    { t: '状态', r: r => st(APPT_STATUS, r.status) }
+  ], appts.slice(0, 8), '还没有预约记录');
+  h += '</div>';
+  document.getElementById('content').innerHTML = h;
+  renderApps();
+};
+
+function renderApps() {
+  const grid = document.getElementById('appGrid');
+  if (!grid) return;
+  const chips = document.querySelectorAll('#appChips button');
+  chips.forEach(b => b.classList.toggle('on', b.textContent.trim() === appFilter));
+  grid.innerHTML = APPS.filter(a => appFilter === '全部' || a.cat === appFilter).map(a =>
+    '<div class="appcard" onclick="setView(\'' + a.v + '\')"><div class="go">进入 ›</div>' +
+    '<div class="aic" style="background:' + a.bg + '">' + a.ic + '</div>' +
+    '<div class="nm">' + (META[a.v] ? META[a.v][0] : a.v) + '</div>' +
+    '<div class="ds">' + a.ds + '</div></div>').join('');
+}
+
+/* ==================== 门店管理 ==================== */
+VIEWS.stores = async () => {
+  state.stores = await api('/admin/stores');
+  const rows = state.stores;
+  let h = '<div class="card"><div class="card-h"><h3>门店档案</h3><span class="hint">共 ' + rows.length + ' 家</span>' +
+    '<div class="act"><button class="btn sm" onclick="addStore()">＋ 新增门店</button></div></div>' +
+    '<div class="storegrid">';
+  rows.forEach(s => {
+    h += '<div class="store"><div class="nm">' + esc(s.storeName) + (s.status === 1 ? tag('营业中', 'ok') : tag('停业', 'off')) + '</div>' +
+      '<div class="cd">编码 ' + esc(s.storeCode) + '</div>' +
+      '<div class="meta">地址：' + esc(s.address || '-') + '<br>电话：' + esc(s.phone || '-') +
+      '<br>开业：' + dateOf(s.openDate) + '　负责人：' + esc(s.managerName || '未指定') +
+      '<br>牙椅 <b>' + s.chairCount + '</b> 台　医生 <b>' + s.doctorCount + '</b> 人</div>' +
+      '<div class="ops"><button class="btn ghost sm" onclick="editStore(' + s.storeId + ')">编辑</button></div></div>';
+  });
+  h += '</div></div>';
+  document.getElementById('content').innerHTML = h;
+};
+
+function storeFields(s) {
+  return [
+    { key: 'storeCode', label: '门店编码', value: s ? s.storeCode : '', required: true, placeholder: '如 ST003' },
+    { key: 'storeName', label: '门店名称', value: s ? s.storeName : '', required: true },
+    { key: 'address', label: '详细地址', value: s ? s.address : '' },
+    { key: 'phone', label: '联系电话', value: s ? s.phone : '' },
+    { type: 'row', fields: [
+      { key: 'openDate', label: '开业日期', type: 'date', value: s ? dateOf(s.openDate) : '' },
+      { key: 'status', label: '营业状态', type: 'select', value: s ? s.status : 1, options: [{ v: 1, t: '营业中' }, { v: 0, t: '停业' }] }
+    ] }
+  ];
+}
+function addStore() {
+  modal('新增门店', storeFields(null), async v => {
+    await api('/admin/stores', { method: 'POST', body: v });
+    state.stores = [];
+    toast('门店已新增');
+    setView('stores');
+  });
+}
+function editStore(id) {
+  const s = state.stores.find(x => x.storeId === id);
+  if (!s) return;
+  modal('编辑门店 · ' + s.storeName, storeFields(s), async v => {
+    await api('/admin/stores/' + id + '/update', { method: 'POST', body: v });
+    state.stores = [];
+    toast('门店信息已保存');
+    setView('stores');
+  });
+}
+
+/* ==================== 医生管理 ==================== */
+VIEWS.doctors = async () => {
+  await loadBase();
+  const rows = await api('/admin/doctors');
+  state.doctors = rows;
+  let h = '<div class="card"><div class="card-h"><h3>医生名录</h3><span class="hint">共 ' + rows.length + ' 人</span>' +
+    '<div class="act"><button class="btn sm" onclick="addDoctor()">＋ 新增医生</button></div></div>';
+  h += table([
+    { t: '姓名', r: r => '<b>' + esc(r.doctorName) + '</b>' },
+    { t: '工号', r: r => '<span class="mono">' + esc(r.jobNo || '-') + '</span>' },
+    { t: '职称', r: r => esc(r.title || '-') },
+    { t: '擅长方向', r: r => esc(r.specialty || '-') },
+    { t: '执业证号', r: r => '<span class="mono">' + esc(r.practiceNo || '-') + '</span>' },
+    { t: '电话', r: r => esc(r.phone || '-') },
+    { t: '所属门店', r: r => esc(storeName(r.homeStoreId)) },
+    { t: '提成', r: r => (r.incentiveRate != null ? (Number(r.incentiveRate) * 100).toFixed(0) + '%' : '-') },
+    { t: '操作', w: '130px', r: r => '<button class="btn gray sm" onclick="editDoctor(' + r.doctorId + ')">编辑</button> ' +
+        '<button class="btn danger sm" onclick="delDoctor(' + r.doctorId + ',\'' + esc(r.doctorName) + '\')">删除</button>' }
+  ], rows, '暂无医生记录');
+  h += '</div>';
+  document.getElementById('content').innerHTML = h;
+};
+
+function doctorFields(d) {
+  return [
+    { type: 'row', fields: [
+      { key: 'realName', label: '姓名', value: d ? d.doctorName : '', required: true },
+      { key: 'jobNo', label: '工号', value: d ? d.jobNo : '', required: true }
+    ] },
+    { type: 'row', fields: [
+      { key: 'title', label: '职称', value: d ? d.title : '', placeholder: '主治医师 / 副主任医师' },
+      { key: 'phone', label: '手机号', value: d ? d.phone : '' }
+    ] },
+    { key: 'specialty', label: '擅长方向', value: d ? d.specialty : '', placeholder: '正畸 / 种植 / 儿牙' },
+    { key: 'practiceNo', label: '执业证号', value: d ? d.practiceNo : '' },
+    { type: 'row', fields: [
+      { key: 'homeStoreId', label: '所属门店', type: 'select', value: d ? d.homeStoreId : '', options: state.stores.map(s => ({ v: s.storeId, t: s.storeName })) },
+      { key: 'incentiveRate', label: '提成比例', type: 'number', step: '0.01', value: d ? d.incentiveRate : 0.1 }
+    ] },
+    d ? null : { key: 'account', label: '登录账号', placeholder: '留空则自动按工号生成' },
+    d ? null : { key: 'password', label: '初始密码', value: '123456' }
+  ].filter(Boolean);
+}
+function addDoctor() {
+  modal('新增医生', doctorFields(null), async v => {
+    await api('/admin/doctors', { method: 'POST', body: v });
+    state.doctors = [];
+    toast('医生已新增');
+    setView('doctors');
+  });
+}
+function editDoctor(id) {
+  const d = state.doctors.find(x => x.doctorId === id);
+  if (!d) return;
+  modal('编辑医生 · ' + d.doctorName, doctorFields(d), async v => {
+    await api('/admin/doctors/' + id + '/update', { method: 'POST', body: v });
+    state.doctors = [];
+    toast('医生信息已保存');
+    setView('doctors');
+  });
+}
+function delDoctor(id, name) {
+  if (!confirm('确定删除医生「' + name + '」？该操作只影响医生档案，历史诊疗记录保留。')) return;
+  api('/admin/doctors/' + id + '/delete', { method: 'POST' })
+    .then(() => { state.doctors = []; toast('已删除'); setView('doctors'); })
+    .catch(e => toast(e.message, false));
+}
+
+/* ==================== 牙椅设备 ==================== */
+VIEWS.chairs = async () => {
+  await loadBase();
+  const rows = await api('/admin/chairs');
+  let h = '<div class="card"><div class="card-h"><h3>设备台账</h3><span class="hint">共 ' + rows.length + ' 台</span>' +
+    '<div class="act"><button class="btn sm" onclick="addChair()">＋ 新增牙椅</button></div></div>';
+  h += table([
+    { t: '编号', r: r => '<b>' + esc(r.chairNo) + '</b>' },
+    { t: '所属门店', r: r => esc(storeName(r.storeId)) },
+    { t: '设备型号', r: r => esc(r.deviceName || '-') },
+    { t: '采购价', r: r => money(r.purchasePrice) },
+    { t: '购置日期', r: r => dateOf(r.purchaseDate) },
+    { t: '折旧年限', r: r => (r.deprecYears || '-') + ' 年' },
+    { t: '月折旧', r: r => money(r.monthlyDeprec) },
+    { t: '单次成本', r: r => money(r.perUseCost) },
+    { t: '状态', r: r => st(CHAIR_STATUS, r.status) },
+    { t: '操作', w: '130px', r: r => '<button class="btn gray sm" onclick="editChair(' + r.chairId + ')">编辑</button> ' +
+        '<button class="btn danger sm" onclick="delChair(' + r.chairId + ',\'' + esc(r.chairNo) + '\')">删除</button>' }
+  ], rows, '暂无设备记录');
+  h += '</div>';
+  document.getElementById('content').innerHTML = h;
+};
+
+function chairFields(c) {
+  return [
+    { type: 'row', fields: [
+      { key: 'chairNo', label: '牙椅编号', value: c ? c.chairNo : '', required: true, placeholder: '如 C07' },
+      { key: 'storeId', label: '所属门店', type: 'select', value: c ? c.storeId : '', options: state.stores.map(s => ({ v: s.storeId, t: s.storeName })) }
+    ] },
+    { key: 'deviceName', label: '设备型号', value: c ? c.deviceName : '', placeholder: '如 西诺德 Sirona C8' },
+    { type: 'row', fields: [
+      { key: 'purchasePrice', label: '采购价（元）', type: 'number', value: c ? c.purchasePrice : 0 },
+      { key: 'purchaseDate', label: '购置日期', type: 'date', value: c ? dateOf(c.purchaseDate) : '' }
+    ] },
+    { type: 'row', fields: [
+      { key: 'deprecYears', label: '折旧年限', type: 'number', value: c ? c.deprecYears : 8 },
+      { key: 'perUseCost', label: '单次使用成本', type: 'number', step: '0.01', value: c ? c.perUseCost : 0 }
+    ] },
+    { type: 'row', fields: [
+      { key: 'supplierId', label: '供应商', type: 'select', value: c ? c.supplierId : '', options: [{ v: '', t: '未指定' }].concat(state.suppliers.map(s => ({ v: s.supplierId, t: s.supplierName }))) },
+      { key: 'status', label: '状态', type: 'select', value: c ? c.status : 1, options: [{ v: 1, t: '在用' }, { v: 2, t: '维修' }, { v: 3, t: '报废' }] }
+    ] }
+  ];
+}
+function addChair() {
+  modal('新增牙椅', chairFields(null), async v => {
+    if (v.supplierId === '') delete v.supplierId; else v.supplierId = Number(v.supplierId);
+    await api('/admin/chairs', { method: 'POST', body: v });
+    toast('牙椅已新增');
+    setView('chairs');
+  });
+}
+function editChair(id) {
+  api('/admin/chairs').then(rows => {
+    const c = rows.find(x => x.chairId === id);
+    modal('编辑牙椅 · ' + c.chairNo, chairFields(c), async v => {
+      if (v.supplierId === '') delete v.supplierId; else v.supplierId = Number(v.supplierId);
+      await api('/admin/chairs/' + id + '/update', { method: 'POST', body: v });
+      toast('设备信息已保存');
+      setView('chairs');
+    });
+  });
+}
+function delChair(id, no) {
+  if (!confirm('确定删除牙椅「' + no + '」？')) return;
+  api('/admin/chairs/' + id + '/delete', { method: 'POST' })
+    .then(() => { toast('已删除'); setView('chairs'); }).catch(e => toast(e.message, false));
+}
+
+/* ==================== 治疗项目 ==================== */
+VIEWS.items = async () => {
+  const rows = await api('/admin/items');
+  state.items = rows;
+  const cats = [...new Set(rows.map(r => r.category).filter(Boolean))];
+  let h = '<div class="card"><div class="card-h"><h3>项目价目表</h3><span class="hint">共 ' + rows.length + ' 项</span>' +
+    '<div class="act"><button class="btn sm" onclick="addItem()">＋ 新增项目</button></div></div>';
+  h += table([
+    { t: '编码', r: r => '<span class="mono">' + esc(r.itemCode) + '</span>' },
+    { t: '项目名称', r: r => '<b>' + esc(r.itemName) + '</b>' },
+    { t: '分类', r: r => esc(r.category || '-') },
+    { t: '单位', r: r => esc(r.unit || '-') },
+    { t: '定价', r: r => money(r.price) },
+    { t: '材料成本', r: r => money(r.materialCost) },
+    { t: '毛利率', r: r => r.price ? (((r.price - (r.materialCost || 0)) / r.price) * 100).toFixed(1) + '%' : '-' },
+    { t: '状态', r: r => r.status === 1 ? tag('启用', 'ok') : tag('停用', 'off') },
+    { t: '操作', w: '130px', r: r => '<button class="btn gray sm" onclick="editItem(' + r.itemId + ')">编辑</button> ' +
+        '<button class="btn danger sm" onclick="delItem(' + r.itemId + ',\'' + esc(r.itemName) + '\')">删除</button>' }
+  ], rows, '暂无项目');
+  h += '</div>';
+  if (cats.length) h += '<div class="card"><div class="card-h"><h3>分类分布</h3></div>' + cats.map(c => {
+    const n = rows.filter(r => r.category === c).length;
+    return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:9px"><span style="width:84px;font-size:12.5px;color:#5b6a65">' + esc(c) + '</span>' +
+      '<div style="flex:1;height:8px;background:#f0f4f3;border-radius:4px;overflow:hidden"><i style="display:block;height:100%;width:' + (n / rows.length * 100) + '%;background:#14a075"></i></div>' +
+      '<span style="font-size:12px;color:#7c8a86;width:34px;text-align:right">' + n + '</span></div>';
+  }).join('') + '</div>';
+  document.getElementById('content').innerHTML = h;
+};
+
+function itemFields(it) {
+  return [
+    { type: 'row', fields: [
+      { key: 'itemCode', label: '项目编码', value: it ? it.itemCode : '', required: true, placeholder: '如 D022' },
+      { key: 'itemName', label: '项目名称', value: it ? it.itemName : '', required: true }
+    ] },
+    { type: 'row', fields: [
+      { key: 'category', label: '分类', value: it ? it.category : '', placeholder: '洁牙 / 修复 / 正畸' },
+      { key: 'unit', label: '计价单位', value: it ? it.unit : '次' }
+    ] },
+    { type: 'row', fields: [
+      { key: 'price', label: '定价（元）', type: 'number', step: '0.01', value: it ? it.price : 0 },
+      { key: 'materialCost', label: '材料成本（元）', type: 'number', step: '0.01', value: it ? it.materialCost : 0 }
+    ] },
+    { key: 'status', label: '状态', type: 'select', value: it ? it.status : 1, options: [{ v: 1, t: '启用' }, { v: 0, t: '停用' }] }
+  ];
+}
+function addItem() {
+  modal('新增治疗项目', itemFields(null), async v => {
+    await api('/admin/items', { method: 'POST', body: v });
+    state.items = [];
+    toast('项目已新增');
+    setView('items');
+  });
+}
+function editItem(id) {
+  const it = state.items.find(x => x.itemId === id);
+  modal('编辑项目 · ' + it.itemName, itemFields(it), async v => {
+    await api('/admin/items/' + id + '/update', { method: 'POST', body: v });
+    state.items = [];
+    toast('项目已保存');
+    setView('items');
+  });
+}
+function delItem(id, name) {
+  if (!confirm('确定删除项目「' + name + '」？')) return;
+  api('/admin/items/' + id + '/delete', { method: 'POST' })
+    .then(() => { state.items = []; toast('已删除'); setView('items'); }).catch(e => toast(e.message, false));
+}
+
+/* ==================== 供应商 ==================== */
+VIEWS.suppliers = async () => {
+  const rows = await api('/admin/suppliers');
+  state.suppliers = rows;
+  let h = '<div class="card"><div class="card-h"><h3>供应商名录</h3><span class="hint">共 ' + rows.length + ' 家</span>' +
+    '<div class="act"><button class="btn sm" onclick="addSupplier()">＋ 新增供应商</button></div></div>';
+  h += table([
+    { t: '供应商', r: r => '<b>' + esc(r.supplierName) + '</b>' },
+    { t: '联系人', r: r => esc(r.contactPerson || '-') },
+    { t: '电话', r: r => esc(r.phone || '-') },
+    { t: '地址', r: r => esc(r.address || '-') },
+    { t: '状态', r: r => r.status === 1 ? tag('合作中', 'ok') : tag('已终止', 'off') },
+    { t: '操作', w: '130px', r: r => '<button class="btn gray sm" onclick="editSupplier(' + r.supplierId + ')">编辑</button> ' +
+        '<button class="btn danger sm" onclick="delSupplier(' + r.supplierId + ',\'' + esc(r.supplierName) + '\')">删除</button>' }
+  ], rows, '暂无供应商');
+  h += '</div>';
+  document.getElementById('content').innerHTML = h;
+};
+
+function supplierFields(s) {
+  return [
+    { key: 'supplierName', label: '供应商名称', value: s ? s.supplierName : '', required: true },
+    { type: 'row', fields: [
+      { key: 'contactPerson', label: '联系人', value: s ? s.contactPerson : '' },
+      { key: 'phone', label: '联系电话', value: s ? s.phone : '' }
+    ] },
+    { key: 'address', label: '地址', value: s ? s.address : '' },
+    { key: 'status', label: '合作状态', type: 'select', value: s ? s.status : 1, options: [{ v: 1, t: '合作中' }, { v: 0, t: '已终止' }] }
+  ];
+}
+function addSupplier() {
+  modal('新增供应商', supplierFields(null), async v => {
+    await api('/admin/suppliers', { method: 'POST', body: v });
+    state.suppliers = [];
+    toast('供应商已新增');
+    setView('suppliers');
+  });
+}
+function editSupplier(id) {
+  const s = state.suppliers.find(x => x.supplierId === id);
+  modal('编辑供应商 · ' + s.supplierName, supplierFields(s), async v => {
+    await api('/admin/suppliers/' + id + '/update', { method: 'POST', body: v });
+    state.suppliers = [];
+    toast('供应商已保存');
+    setView('suppliers');
+  });
+}
+function delSupplier(id, name) {
+  if (!confirm('确定删除供应商「' + name + '」？')) return;
+  api('/admin/suppliers/' + id + '/delete', { method: 'POST' })
+    .then(() => { state.suppliers = []; toast('已删除'); setView('suppliers'); }).catch(e => toast(e.message, false));
+}
+
+/* ==================== 预约管理 ==================== */
+VIEWS.appointments = async () => {
+  await loadBase();
+  const rows = await api('/admin/appointments');
+  let h = '<div class="card"><div class="card-h"><h3>全部预约</h3><span class="hint">共 ' + rows.length + ' 单</span>' +
+    '<div class="act">' +
+    '<input type="text" id="aSearch" placeholder="搜索预约号 / 患者 / 医生" style="width:200px">' +
+    '<input type="date" id="aFrom" style="width:140px">' +
+    '<span class="hint">至</span>' +
+    '<input type="date" id="aTo" style="width:140px">' +
+    '<select id="fltStore" style="width:150px"><option value="">全部门店</option>' +
+    state.stores.map(s => '<option value="' + s.storeId + '">' + esc(s.storeName) + '</option>').join('') + '</select>' +
+    '<select id="fltStatus" style="width:130px"><option value="">全部状态</option>' +
+    Object.keys(APPT_STATUS).map(k => '<option value="' + k + '">' + APPT_STATUS[k][0] + '</option>').join('') + '</select>' +
+    '</div></div><div id="apptTable"></div></div>';
+  document.getElementById('content').innerHTML = h;
+
+  const render = () => {
+    const sid = document.getElementById('fltStore').value;
+    const stt = document.getElementById('fltStatus').value;
+    const kw = (document.getElementById('aSearch').value || '').trim();
+    const from = document.getElementById('aFrom').value;
+    const to = document.getElementById('aTo').value;
+    const list = rows.filter(r =>
+      (!sid || String(r.storeId) === sid) &&
+      (stt === '' || String(r.status) === stt) &&
+      (!from || (r.visitDate || '') >= from) &&
+      (!to || (r.visitDate || '') <= to) &&
+      (!kw || [r.appointmentNo, r.patientName, r.doctorName].some(v => String(v || '').includes(kw))));
+    document.getElementById('apptTable').innerHTML = paged('appointments', [
+      { t: '预约号', r: r => '<span class="mono">' + esc(r.appointmentNo) + '</span>' },
+      { t: '患者', r: r => esc(r.patientName) },
+      { t: '医生', r: r => esc(r.doctorName) },
+      { t: '门店', r: r => esc(storeName(r.storeId)) },
+      { t: '就诊日期', r: r => dateOf(r.visitDate) },
+      { t: '时段', r: r => esc(r.timeSlot || '-') },
+      { t: '预付', r: r => (r.depositAmount ? money(r.depositAmount) : '-') + (r.depositStatus === 1 ? ' ' + tag('已预付', 'ok') : '') },
+      { t: '状态', r: r => st(APPT_STATUS, r.status) }
+    ], list, '该条件下没有预约');
+  };
+  window.__rerender.appointments = render;
+  ['fltStore', 'fltStatus', 'aFrom', 'aTo'].forEach(id => {
+    document.getElementById(id).onchange = () => { PAGE.cur.appointments = 1; render(); };
+  });
+  document.getElementById('aSearch').oninput = () => { PAGE.cur.appointments = 1; render(); };
+  render();
+};
+
+/* ==================== 患者档案 ==================== */
+VIEWS.patients = async () => {
+  const rows = await api('/admin/patients');
+  let h = '<div class="card"><div class="card-h"><h3>患者档案</h3><span class="hint">共 ' + rows.length + ' 份</span>' +
+    '<div class="act"><input type="text" id="pSearch" placeholder="搜索姓名 / 手机 / 健康卡号" style="width:240px"></div></div><div id="pTable"></div></div>';
+  document.getElementById('content').innerHTML = h;
+
+  const render = () => {
+    const q = (document.getElementById('pSearch').value || '').trim();
+    const list = rows.filter(r => !q || [r.realName, r.phone, r.healthCardNo].some(v => String(v || '').includes(q)));
+    document.getElementById('pTable').innerHTML = paged('patients', [
+      { t: '姓名', r: r => '<b>' + esc(r.realName || '-') + '</b>' },
+      { t: '性别', r: r => genderTxt(r.gender) },
+      { t: '手机', r: r => esc(r.phone || '-') },
+      { t: '健康卡号', r: r => '<span class="mono">' + esc(r.healthCardNo || '-') + '</span>' },
+      { t: '出生日期', r: r => dateOf(r.birthday) },
+      { t: '常用门店', r: r => esc(r.storeName) },
+      { t: '过敏记录', r: r => r.allergyCount > 0 ? tag(r.allergyCount + ' 条', 'warn') : tag('无', 'off') },
+      { t: '账号', r: r => r.status === 1 ? tag('正常', 'ok') : tag('已注销', 'bad') }
+    ], list, '没有匹配的患者');
+  };
+  window.__rerender.patients = render;
+  document.getElementById('pSearch').oninput = () => { PAGE.cur.patients = 1; render(); };
+  render();
+};
+
+/* ==================== 收费单据 ==================== */
+VIEWS.bills = async () => {
+  await loadBase();
+  const rows = await api('/admin/bills');
+  let h = '<div class="card"><div class="card-h"><h3>收费单</h3><span class="hint">共 ' + rows.length + ' 张</span>' +
+    '<div class="act"><input type="text" id="bSearch" placeholder="搜索单号 / 患者" style="width:200px">' +
+    '<select id="bStatus" style="width:130px"><option value="">全部状态</option>' +
+    Object.keys(BILL_STATUS).map(k => '<option value="' + k + '">' + BILL_STATUS[k][0] + '</option>').join('') + '</select></div></div>' +
+    '<div id="bTable"></div></div>';
+  document.getElementById('content').innerHTML = h;
+
+  const render = () => {
+    const q = (document.getElementById('bSearch').value || '').trim();
+    const stt = document.getElementById('bStatus').value;
+    const list = rows.filter(r =>
+      (stt === '' || String(r.status) === stt) &&
+      (!q || [r.billNo, r.patientName].some(v => String(v || '').includes(q))));
+    document.getElementById('bTable').innerHTML = paged('bills', [
+      { t: '单号', r: r => '<span class="mono">' + esc(r.billNo) + '</span>' },
+      { t: '患者', r: r => esc(r.patientName || '-') },
+      { t: '门店', r: r => esc(storeName(r.storeId)) },
+      { t: '应收', r: r => money(r.totalAmount) },
+      { t: '优惠', r: r => money(r.discount || 0) },
+      { t: '实收', r: r => '<b>' + money(r.payable) + '</b>' },
+      { t: '渠道', r: r => esc(r.payChannel || '-') },
+      { t: '状态', r: r => st(BILL_STATUS, r.status) },
+      { t: '时间', r: r => r.payTime ? String(r.payTime).replace('T', ' ').slice(0, 16) : '-' },
+      { t: '操作', w: '96px', r: r => (r.status === 1 ? '<button class="btn ghost sm" onclick="invoice(' + r.billId + ')">开票</button>' : '') }
+    ], list, '暂无收费单');
+  };
+  window.__rerender.bills = render;
+  document.getElementById('bSearch').oninput = () => { PAGE.cur.bills = 1; render(); };
+  document.getElementById('bStatus').onchange = () => { PAGE.cur.bills = 1; render(); };
+  render();
+};
+
+function invoice(id) {
+  if (!confirm('确认为该收费单开具发票？状态将变更为已开票。')) return;
+  api('/admin/bills/' + id + '/invoice', { method: 'POST' })
+    .then(() => { toast('已开票'); setView('bills'); }).catch(e => toast(e.message, false));
+}
+
+/* ==================== 数据备份 ==================== */
+const uid = () => (state.me && state.me.user ? state.me.user.userId : 0);
+const fmtSize = n => n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB';
+
+VIEWS.data = async () => {
+  const d = await api('/admin/backups?operatorId=' + uid());
+  const items = d.items || [];
+  let h = '<div class="card"><div class="card-h"><h3>数据备份</h3>' +
+    '<span class="hint">共 ' + items.length + ' 份，保留最近 30 份</span>' +
+    '<div class="act"><button class="btn sm" onclick="doBackup()">立即备份</button></div></div>';
+  h += '<div class="dl" style="margin-bottom:16px">' +
+    '<div class="box"><h4>数据库位置</h4><p>系统所有业务数据都保存在这个文件里，<b>重启不会丢失</b>。<br><code>' + esc(d.dataDir) + '</code></p></div>' +
+    '<div class="box"><h4>备份策略</h4><p>每天凌晨 02:30 自动备份一次；启动时若超过 20 小时没备份也会自动补一次。备份文件损坏或误删数据时，可用右侧“恢复”。</p><code>' + esc(d.backupDir) + '</code></div>' +
+    '<div class="box"><h4>异地保存</h4><p>点“下载”把备份存到 U 盘或网盘，即使电脑损坏也能恢复。建议每周下载一次。</p></div>' +
+    '</div>';
+  h += table([
+    { t: '备份文件', r: r => '<span class="bk-name">' + esc(r.name) + '</span>' },
+    { t: '大小', r: r => fmtSize(r.size) },
+    { t: '备份时间', r: r => String(r.time).replace('T', ' ').slice(0, 19).replace(/-/g, '-') },
+    { t: '操作', w: '160px', r: r => '<button class="btn ghost sm" onclick="dlBackup(\'' + esc(r.name) + '\')">下载</button> ' +
+        '<button class="btn ghost sm" onclick="restoreBackup(\'' + esc(r.name) + '\')">恢复</button>' }
+  ], items, '还没有备份，点右上角“立即备份”创建第一份');
+  h += '</div>';
+  document.getElementById('content').innerHTML = h;
+};
+
+async function doBackup() {
+  toast('正在备份…');
+  try {
+    const b = await api('/admin/backups?operatorId=' + uid(), { method: 'POST' });
+    toast('备份完成：' + b.name);
+    setView('data');
+  } catch (e) { toast(e.message, false); }
+}
+
+function dlBackup(name) {
+  location.href = '/api/admin/backups/download?operatorId=' + uid() + '&name=' + encodeURIComponent(name);
+}
+
+function restoreBackup(name) {
+  if (!confirm('确定用备份 ' + name + ' 覆盖当前数据库吗？\n\n当前数据会先自动留档，然后需要关闭并重新启动系统才生效。')) return;
+  api('/admin/backups/restore?operatorId=' + uid() + '&name=' + encodeURIComponent(name), { method: 'POST' })
+    .then(r => alert(r.message || '备份已就绪，请重启系统完成恢复。'))
+    .catch(e => toast(e.message, false));
+}
+
+/* ==================== 数据导出 ==================== */
+VIEWS.export = async () => {
+  const h = '<div class="card"><div class="card-h"><h3>数据导出</h3>' +
+    '<span class="hint">CSV 格式（UTF-8 BOM），Excel / WPS 双击即可打开</span></div>' +
+    '<div class="card-h" style="margin-bottom:14px">' +
+    '<span class="hint">按日期筛选（可选）：</span>' +
+    '<input type="date" id="exFrom" style="width:150px"><span class="hint">至</span>' +
+    '<input type="date" id="exTo" style="width:150px"></div>' +
+    '<div class="dl">' +
+    '<div class="box"><h4>患者档案</h4><p>姓名、性别、手机、健康卡号、生日、常用门店、过敏记录。</p>' +
+    '<button class="btn sm" onclick="doExport(\'patients\')">导出患者档案</button></div>' +
+    '<div class="box"><h4>预约记录</h4><p>预约号、患者、医生、门店、就诊日期、状态与预付金额，可按日期范围导出。</p>' +
+    '<button class="btn sm" onclick="doExport(\'appointments\')">导出预约记录</button></div>' +
+    '<div class="box"><h4>收费单据</h4><p>单号、患者、门店、应收 / 优惠 / 实收、<b>医保统筹报销与个人自付</b>、支付渠道与时间，适合财务对账与医保结算申报。</p>' +
+    '<button class="btn sm" onclick="doExport(\'bills\')">导出收费单据</button></div>' +
+    '</div></div>';
+  document.getElementById('content').innerHTML = h;
+};
+
+function doExport(kind) {
+  const from = document.getElementById('exFrom').value;
+  const to = document.getElementById('exTo').value;
+  let url = '/api/admin/export/' + kind + '?operatorId=' + uid();
+  if (from) url += '&from=' + from;
+  if (to) url += '&to=' + to;
+  location.href = url;
+  toast('已开始下载');
+}
+
+/* ==================== 人员与账号 ==================== */
+let userFilter = '全部';
+VIEWS.users = async () => {
+  const rows = await api('/admin/users');
+  state.users = rows;
+  let h = '<div class="card"><div class="card-h"><h3>工作人员与账号</h3><span class="hint">共 ' + rows.length + ' 个，初始密码统一为 123456；牙医请在「医生团队」新增，患者与牙医也可在官网自助注册</span>' +
+    '<div class="act"><input type="text" id="uSearch" placeholder="搜索账号 / 姓名" style="width:220px">' +
+    '<button class="btn sm" onclick="addStaff()">＋ 新增人员</button></div></div>' +
+    '<div class="appchips" id="userChips" style="margin:0 0 14px"></div><div id="uTable"></div></div>';
+  document.getElementById('content').innerHTML = h;
+
+  const CATS = ['全部', '患者', '牙医', '门店管理员', '总部管理员', '未分配'];
+  const render = () => {
+    document.getElementById('userChips').innerHTML = CATS.map(c => {
+      const n = c === '全部' ? rows.length : c === '未分配'
+        ? rows.filter(r => !(r.roleNames || []).length).length
+        : rows.filter(r => (r.roleNames || []).includes(c)).length;
+      return '<button class="' + (c === userFilter ? 'on' : '') + '" onclick="userFilter=this.textContent.split(/（/)[0].trim();__rerender.users()">' +
+        c + '（' + n + '）</button>';
+    }).join('');
+    const q = (document.getElementById('uSearch').value || '').trim();
+    let list = rows.filter(r => !q || [r.account, r.realName].some(v => String(v || '').includes(q)));
+    if (userFilter !== '全部') {
+      list = userFilter === '未分配'
+        ? list.filter(r => !(r.roleNames || []).length)
+        : list.filter(r => (r.roleNames || []).includes(userFilter));
+    }
+    document.getElementById('uTable').innerHTML = paged('users', [
+      { t: '账号', r: r => '<span class="mono">' + esc(r.account) + '</span>' },
+      { t: '姓名', r: r => '<b>' + esc(r.realName || '-') + '</b>' },
+      { t: '性别', r: r => genderTxt(r.gender) },
+      { t: '手机', r: r => esc(r.phone || '-') },
+      { t: '角色', r: r => (r.roleNames || []).map(n => tag(n, 'info')).join(' ') || tag('未分配', 'off') },
+      { t: '状态', r: r => r.status === 1 ? tag('正常', 'ok') : tag('禁用', 'bad') },
+      { t: '入职时间', r: r => dateOf(r.createTime) },
+      { t: '操作', w: '240px', r: r => (r.status === 1
+          ? '<button class="btn gray sm" onclick="toggleUser(' + r.userId + ',0)">禁用</button> '
+          : '<button class="btn sm" onclick="toggleUser(' + r.userId + ',1)">启用</button> ') +
+        '<button class="btn ghost sm" onclick="resetPwd(' + r.userId + ',\'' + esc(r.account) + '\')">重置密码</button> ' +
+        '<button class="btn danger sm" onclick="delStaff(' + r.userId + ',\'' + esc(r.realName || r.account) + '\')">删除</button>' }
+    ], list, '没有匹配的账号');
+  };
+  window.__rerender.users = render;
+  document.getElementById('uSearch').oninput = () => { PAGE.cur.users = 1; render(); };
+  render();
+};
+
+/** 新增工作人员（门店管理员 / 总部管理员） */
+function addStaff() {
+  modal('新增工作人员', [
+    { type: 'row', fields: [
+      { key: 'realName', label: '姓名', required: true, placeholder: '如 张明' },
+      { key: 'gender', label: '性别', type: 'select', value: 1, options: [{ v: 1, t: '男' }, { v: 0, t: '女' }] }
+    ] },
+    { type: 'row', fields: [
+      { key: 'account', label: '登录账号', required: true, placeholder: '门店管理员建议 store 开头，如 store201' },
+      { key: 'phone', label: '手机号', placeholder: '选填' }
+    ] },
+    { type: 'row', fields: [
+      { key: 'roleCode', label: '角色', type: 'select', value: 'storeAdmin', options: [{ v: 'storeAdmin', t: '门店管理员' }, { v: 'hqAdmin', t: '总部管理员' }] },
+      { key: 'password', label: '初始密码', value: '123456' }
+    ] },
+    { note: '新增后该同事即可用此账号登录系统；门店管理员账号会自动加 store 前缀以保证角色识别一致。牙医请到「医生团队」新增（会同步创建执业档案）；患者与牙医也可在官网自行注册。' }
+  ], async v => {
+    v.gender = Number(v.gender);
+    const m = await api('/admin/users?operatorId=' + uid(), { method: 'POST', body: v });
+    toast(m);
+    setView('users');
+  });
+}
+
+/** 删除工作人员（患者 / 牙医账号受保护） */
+function delStaff(id, name) {
+  if (!confirm('确定删除人员「' + name + '」？\n\n其账号将立即失效，历史业务数据（预约 / 账单等）全部保留。')) return;
+  api('/admin/users/' + id + '/delete?operatorId=' + uid(), { method: 'POST' })
+    .then(m => { toast(m); setView('users'); }).catch(e => toast(e.message, false));
+}
+
+function toggleUser(id, status) {
+  api('/admin/users/' + id + '/status?status=' + status, { method: 'POST' })
+    .then(m => { toast(m); setView('users'); }).catch(e => toast(e.message, false));
+}
+function resetPwd(id, acc) {
+  if (!confirm('将账号「' + acc + '」的密码重置为 123456？')) return;
+  api('/admin/users/' + id + '/reset-pwd', { method: 'POST' })
+    .then(m => toast(m)).catch(e => toast(e.message, false));
+}
+
+/* ==================== 角色与权限 ==================== */
+VIEWS.roles = async () => {
+  const [roles, perms, rps] = await Promise.all([
+    api('/admin/roles'), api('/admin/permissions'), api('/admin/role-permissions')
+  ]);
+  state.roles = roles; state.perms = perms;
+  const granted = {};
+  rps.forEach(r => { granted[r.roleId] = new Set((r.permNames || [])); });
+
+  let h = '<div class="card"><div class="card-h"><h3>角色授权矩阵</h3>' +
+    '<span class="hint">勾选表示该角色拥有对应功能，取消即收回；修改立即生效</span></div>';
+  h += '<div class="tw" style="max-height:none"><table class="matrix"><thead><tr><th style="width:220px">功能 / 角色</th>';
+  roles.forEach(r => h += '<th style="text-align:center">' + esc(r.roleName) + '<div style="font-weight:400;color:#9aa8a3;font-size:11px">' + r.userCount + ' 人</div></th>');
+  h += '</tr></thead><tbody>';
+  perms.forEach(p => {
+    h += '<tr><td><b>' + esc(p.permName) + '</b>' + (p.permType === '菜单' ? ' ' + tag('菜单', 'off') : ' ' + tag(p.permType || '操作', 'info')) + '</td>';
+    roles.forEach(r => {
+      const on = granted[r.roleId] && granted[r.roleId].has(p.permName);
+      h += '<td class="ck"><input type="checkbox" ' + (on ? 'checked' : '') +
+        ' onchange="grant(' + r.roleId + ',' + p.permId + ',this)"></td>';
+    });
+    h += '</tr>';
+  });
+  h += '</tbody></table></div></div>';
+
+  h += '<div class="card"><div class="card-h"><h3>角色说明</h3></div>' + roles.map(r =>
+    '<div style="display:flex;gap:12px;align-items:baseline;padding:9px 0;border-bottom:1px solid #f2f5f4">' +
+    '<b style="width:110px">' + esc(r.roleName) + '</b>' +
+    '<span class="mono" style="width:90px;color:#7c8a86">' + esc(r.roleCode) + '</span>' +
+    '<span style="font-size:12.5px;color:#5b6a65">' + (granted[r.roleId] ? [...granted[r.roleId]].join('、') : '暂无授权') + '</span></div>').join('') +
+    '</div>';
+  document.getElementById('content').innerHTML = h;
+};
+
+function grant(roleId, permId, el) {
+  const on = el.checked;
+  api('/admin/role-permissions/grant?roleId=' + roleId + '&permId=' + permId + '&grant=' + on, { method: 'POST' })
+    .then(m => toast(m)).catch(e => { el.checked = !on; toast(e.message, false); });
+}
+
+/* ==================== 资质审核 ==================== */
+VIEWS.quals = async () => {
+  const rows = await api('/admin/qualifications');
+  let h = '<div class="card"><div class="card-h"><h3>医师资质</h3><span class="hint">共 ' + rows.length + ' 份，待初审 ' +
+    rows.filter(r => r.auditStatus === 0).length + ' 份</span></div>';
+  h += table([
+    { t: '医生', r: r => '<b>' + esc(r.doctorName) + '</b>' },
+    { t: '资质名称', r: r => esc(r.qualName) },
+    { t: '证书编号', r: r => '<span class="mono">' + esc(r.certNo) + '</span>' },
+    { t: '发证机构', r: r => esc(r.issueOrg || '-') },
+    { t: '有效期至', r: r => {
+        const d = dateOf(r.expireDate);
+        const soon = r.expireDate && (new Date(r.expireDate) - new Date()) < 90 * 864e5;
+        return d + (soon ? ' ' + tag('临近到期', 'warn') : '');
+      } },
+    { t: '审核状态', r: r => st(AUDIT_STATUS, r.auditStatus) },
+    { t: '操作', w: '150px', r: r => (r.auditStatus === 0
+        ? '<button class="btn sm" onclick="auditQual(' + r.qualificationId + ',1)">初审通过</button> ' +
+          '<button class="btn danger sm" onclick="auditQual(' + r.qualificationId + ',3)">驳回</button>'
+        : (r.auditStatus === 1 ? '<button class="btn sm" onclick="auditQual(' + r.qualificationId + ',2)">终审通过</button>' : '')) }
+  ], rows, '暂无资质记录');
+  h += '</div>';
+  document.getElementById('content').innerHTML = h;
+};
+
+function auditQual(id, status) {
+  api('/admin/qualifications/' + id + '/audit?auditStatus=' + status, { method: 'POST' })
+    .then(m => { toast(typeof m === 'string' ? m : '审核已提交'); setView('quals'); })
+    .catch(e => toast(e.message, false));
+}
+
+/* ==================== 营业日历 ==================== */
+VIEWS.calendar = async () => {
+  await loadBase();
+  const rows = await api('/admin/calendar');
+  let h = '<div class="card"><div class="card-h"><h3>营业日历</h3><span class="hint">共 ' + rows.length + ' 条，按日期倒序</span>' +
+    '<div class="act"><button class="btn sm" onclick="addCalendar()">＋ 设置营业日</button></div></div>';
+  h += table([
+    { t: '日期', r: r => dateOf(r.calDate) },
+    { t: '门店', r: r => esc(storeName(r.storeId)) },
+    { t: '类型', r: r => st(DAY_TYPE, r.dayType) },
+    { t: '开诊', r: r => esc(r.openTime || '-') },
+    { t: '闭诊', r: r => esc(r.closeTime || '-') },
+    { t: '备注', r: r => esc(r.remark || '-') }
+  ], rows, '暂无日历记录');
+  h += '</div>';
+  document.getElementById('content').innerHTML = h;
+};
+
+function addCalendar() {
+  modal('设置营业日', [
+    { key: 'storeId', label: '门店', type: 'select', value: state.stores[0] ? state.stores[0].storeId : '', options: state.stores.map(s => ({ v: s.storeId, t: s.storeName })) },
+    { key: 'calDate', label: '日期', type: 'date', value: new Date().toISOString().slice(0, 10), required: true },
+    { key: 'dayType', label: '日期类型', type: 'select', value: 1, options: [{ v: 1, t: '正常营业' }, { v: 2, t: '节假日' }, { v: 3, t: '休息' }] },
+    { type: 'row', fields: [
+      { key: 'openTime', label: '开诊时间', type: 'time', value: '09:00' },
+      { key: 'closeTime', label: '闭诊时间', type: 'time', value: '18:00' }
+    ] },
+    { key: 'remark', label: '备注', placeholder: '如 春节值班安排' }
+  ], async v => {
+    v.openTime = v.openTime ? v.openTime + ':00' : null;
+    v.closeTime = v.closeTime ? v.closeTime + ':00' : null;
+    await api('/admin/calendar/set', { method: 'POST', body: v });
+    toast('营业日已设置');
+    setView('calendar');
+  });
+}
+
+/* ==================== 运营成本 ==================== */
+VIEWS.costs = async () => {
+  await loadBase();
+  const rows = await api('/admin/costs');
+  const byYear = {};
+  rows.forEach(r => { byYear[r.year] = (byYear[r.year] || 0) + Number(r.amount || 0); });
+  let h = '<div class="stats">';
+  Object.keys(byYear).sort().reverse().slice(0, 4).forEach(y => {
+    h += '<div class="stat"><div class="lb">' + y + ' 年成本合计</div><div class="vl" style="font-size:20px">' + money(byYear[y]) + '</div></div>';
+  });
+  h += '</div>';
+
+  h += '<div class="card" style="margin-top:16px"><div class="card-h"><h3>季度成本明细</h3><span class="hint">房租 + 人力 + 折旧</span>' +
+    '<div class="act"><button class="btn sm" onclick="addCost()">＋ 录入成本</button></div></div>';
+  h += table([
+    { t: '年份', r: r => r.year },
+    { t: '季度', r: r => 'Q' + r.quarter },
+    { t: '门店', r: r => esc(storeName(r.storeId)) },
+    { t: '房租', r: r => money(r.rent) },
+    { t: '人力', r: r => money(r.labor) },
+    { t: '折旧', r: r => money(r.depreciation) },
+    { t: '合计', r: r => '<b>' + money(r.amount) + '</b>' },
+    { t: '操作', w: '90px', r: r => '<button class="btn gray sm" onclick="addCost(' + r.storeId + ',' + r.year + ',' + r.quarter + ')">修改</button>' }
+  ], rows, '暂无成本记录');
+  h += '</div>';
+  document.getElementById('content').innerHTML = h;
+};
+
+function addCost(storeId, year, quarter) {
+  const now = new Date();
+  const exist = storeId ? api('/admin/costs?storeId=' + storeId + '&year=' + year).then(rows => rows.find(r => r.quarter === quarter)) : Promise.resolve(null);
+  exist.then(c => {
+    modal(c ? '修改成本记录' : '录入季度成本', [
+      { key: 'storeId', label: '门店', type: 'select', value: c ? c.storeId : (storeId || (state.stores[0] && state.stores[0].storeId)), options: state.stores.map(s => ({ v: s.storeId, t: s.storeName })) },
+      { type: 'row', fields: [
+        { key: 'year', label: '年份', type: 'number', value: c ? c.year : now.getFullYear() },
+        { key: 'quarter', label: '季度', type: 'select', value: c ? c.quarter : Math.floor(now.getMonth() / 3) + 1, options: [1, 2, 3, 4].map(q => ({ v: q, t: 'Q' + q })) }
+      ] },
+      { type: 'row', fields: [
+        { key: 'rent', label: '房租（元）', type: 'number', step: '0.01', value: c ? c.rent : 0 },
+        { key: 'labor', label: '人力（元）', type: 'number', step: '0.01', value: c ? c.labor : 0 }
+      ] },
+      { key: 'depreciation', label: '折旧（元）', type: 'number', step: '0.01', value: c ? c.depreciation : 0 }
+    ], async v => {
+      await api('/admin/costs', { method: 'POST', body: v });
+      toast('成本已保存');
+      setView('costs');
+    });
+  });
+}
+
+/* ==================== 公告管理 ==================== */
+VIEWS.notices = async () => {
+  const rows = await api('/notice/all');
+  let h = '<div class="card"><div class="card-h"><h3>公告列表</h3><span class="hint">已发布 ' +
+    rows.filter(r => r.status === 1).length + ' 条</span>' +
+    '<div class="act"><button class="btn sm" onclick="addNotice()">＋ 发布公告</button></div></div>';
+  if (!rows.length) h += '<div class="empty">暂无公告</div>';
+  rows.forEach(n => {
+    h += '<div class="notice"><div class="tt">' + esc(n.title) + (n.status === 1 ? tag('已发布', 'ok') : tag('已下架', 'off')) + '</div>' +
+      '<div class="cc">' + esc(n.content) + '</div>' +
+      '<div class="ft"><span>发布时间 ' + (n.publishTime ? String(n.publishTime).replace('T', ' ').slice(0, 16) : '-') + '</span>' +
+      (n.status === 1 ? '<button class="btn gray sm" onclick="offlineNotice(' + n.noticeId + ')">下架</button>' : '') + '</div></div>';
+  });
+  h += '</div>';
+  document.getElementById('content').innerHTML = h;
+};
+
+function addNotice() {
+  modal('发布公告', [
+    { key: 'title', label: '标题', required: true, placeholder: '如 国庆假期门诊安排' },
+    { key: 'content', label: '正文', type: 'textarea', required: true, placeholder: '面向患者展示的公告内容' }
+  ], async v => {
+    await api('/notice/publish', { method: 'POST', body: { title: v.title, content: v.content, publisherId: state.me && state.me.user && state.me.user.userId } });
+    toast('公告已发布');
+    setView('notices');
+  });
+}
+function offlineNotice(id) {
+  if (!confirm('确定下架该公告？下架后患者端不再显示。')) return;
+  api('/notice/' + id + '/offline', { method: 'POST' })
+    .then(() => { toast('已下架'); setView('notices'); }).catch(e => toast(e.message, false));
+}
+
+/* ==================== 系统日志（登录留痕 + 增减操作留痕） ==================== */
+VIEWS.logs = async () => {
+  const [d, op] = await Promise.all([
+    api('/admin/login-logs?limit=300'),
+    api('/admin/op-logs?limit=300').catch(() => null)
+  ]);
+  const items = d.items || [];
+  const OP_ACTION = { ADD: ['新增', 'ok'], DELETE: ['删除', 'bad'], OFF: ['下架/停用', 'warn'],
+    UPDATE: ['变更', 'info'], REFUND: ['退款红冲', 'warn'], CANCEL: ['账户注销', 'bad'] };
+  let h = '<div class="stats">' +
+    '<div class="stat"><div class="lb">累计进入系统</div><div class="vl">' + d.total + '<small>次</small></div></div>' +
+    '<div class="stat"><div class="lb">今日进入</div><div class="vl" style="color:#1a56d6">' + d.todayCount + '<small>次</small></div></div>' +
+    '<div class="stat"><div class="lb">失败尝试</div><div class="vl" style="color:#c0453f">' + d.failCount + '<small>次</small></div></div>' +
+    (op ? '<div class="stat"><div class="lb">关键操作留痕</div><div class="vl">' + op.total + '<small>条</small></div></div>' : '') +
+    '</div>';
+  if (op) {
+    h += '<div class="card" style="margin-top:16px"><div class="card-h"><h3>增减操作留痕（全部有数可查）</h3>' +
+      '<span class="hint">人员/医生/价目/供应商/公告/账单/账户的每一次新增、删除、停用、注销都自动留痕</span>' +
+      '<div class="act"><select id="opFilter" style="width:150px"><option value="">全部动作</option>' +
+      Object.keys(OP_ACTION).map(k => '<option value="' + k + '">' + OP_ACTION[k][0] + '</option>').join('') +
+      '</select><input type="text" id="opSearch" placeholder="搜索对象 / 操作人" style="width:190px"></div></div>' +
+      '<div class="stats" style="margin:6px 0 12px">' +
+      '<div class="stat"><div class="lb">累计新增</div><div class="vl" style="color:#1a7f4f">' + op.addCount + '<small>笔</small></div></div>' +
+      '<div class="stat"><div class="lb">累计删除</div><div class="vl" style="color:#c0453f">' + op.deleteCount + '<small>笔</small></div></div>' +
+      '<div class="stat"><div class="lb">账户注销</div><div class="vl">' + op.cancelCount + '<small>笔</small></div></div>' +
+      '<div class="stat"><div class="lb">退款红冲</div><div class="vl">' + op.refundCount + '<small>笔</small></div></div>' +
+      '</div><div id="opTable"></div></div>';
+  }
+  h += '<div class="card" style="margin-top:16px"><div class="card-h"><h3>进入记录</h3><span class="hint">最近 ' + items.length + ' 条，按时间倒序；登录成功与失败均留痕</span>' +
+    '<div class="act"><select id="lgRole" style="width:130px"><option value="">全部身份</option><option>患者</option><option>牙医</option><option>门店管理员</option><option>总部管理员</option><option value="none">未识别</option></select>' +
+    '<select id="lgFilter" style="width:130px"><option value="">全部记录</option><option value="1">仅成功</option><option value="0">仅失败</option></select>' +
+    '<input type="text" id="lgSearch" placeholder="搜索账号 / 姓名 / IP" style="width:200px"></div></div><div id="lgTable"></div></div>';
+  document.getElementById('content').innerHTML = h;
+
+  if (op) {
+    const opItems = op.items || [];
+    const renderOp = () => {
+      const fa = document.getElementById('opFilter').value;
+      const q = (document.getElementById('opSearch').value || '').trim();
+      const list = opItems.filter(r => {
+        if (fa && r.action !== fa) return false;
+        return !q || [r.targetDesc, r.operatorName, r.targetType, r.detail].some(v => String(v || '').includes(q));
+      });
+      document.getElementById('opTable').innerHTML = paged('oplogs', [
+        { t: '操作时间', r: r => '<span class="mono">' + String(r.opTime).replace('T', ' ').slice(0, 19) + '</span>' },
+        { t: '动作', r: r => { const a = OP_ACTION[r.action] || [r.action, 'info']; return tag(a[0], a[1]); } },
+        { t: '对象', r: r => tag(r.targetType || '-', 'off') + ' <b>' + esc(r.targetDesc || '-') + '</b>' },
+        { t: '操作人', r: r => esc(r.operatorName || '-') },
+        { t: '详情', r: r => '<span class="mono" style="font-size:12px">' + esc(r.detail || '-') + '</span>' }
+      ], list, '暂无操作记录（进行人员/价目/公告等增减操作后自动出现）');
+    };
+    document.getElementById('opFilter').onchange = () => { PAGE.cur.oplogs = 1; renderOp(); };
+    document.getElementById('opSearch').oninput = () => { PAGE.cur.oplogs = 1; renderOp(); };
+    renderOp();
+  }
+
+  const render = () => {
+    const ok = document.getElementById('lgFilter').value;
+    const rl = document.getElementById('lgRole').value;
+    const q = (document.getElementById('lgSearch').value || '').trim();
+    const list = items.filter(r => {
+      if (ok !== '' && String(r.success) !== ok) return false;
+      if (rl === 'none' && r.roleName) return false;
+      if (rl !== '' && rl !== 'none' && r.roleName !== rl) return false;
+      return !q || [r.account, r.realName, r.ip].some(v => String(v || '').includes(q));
+    });
+    document.getElementById('lgTable').innerHTML = paged('logs', [
+      { t: '进入时间', r: r => '<span class="mono">' + String(r.loginTime).replace('T', ' ').slice(0, 19) + '</span>' },
+      { t: '账号', r: r => '<span class="mono">' + esc(r.account || '-') + '</span>' },
+      { t: '姓名', r: r => '<b>' + esc(r.realName || '-') + '</b>' },
+      { t: '身份', r: r => (r.roleName ? tag(r.roleName, 'info') : tag('未识别', 'off')) },
+      { t: '来源 IP', r: r => '<span class="mono">' + esc(r.ip || '-') + '</span>' },
+      { t: '设备', r: r => '<span class="mono" title="' + esc(r.userAgent || '') + '">' + esc((r.userAgent || '-').slice(0, 26)) + '…</span>' },
+      { t: '结果', r: r => r.success === 1 ? tag('进入成功', 'ok') : tag('失败：' + (r.failReason || '-'), 'bad') }
+    ], list, '暂无登录记录（登录一次后自动出现）');
+  };
+  window.__rerender.logs = render;
+  document.getElementById('lgFilter').onchange = () => { PAGE.cur.logs = 1; render(); };
+  document.getElementById('lgRole').onchange = () => { PAGE.cur.logs = 1; render(); };
+  document.getElementById('lgSearch').oninput = () => { PAGE.cur.logs = 1; render(); };
+  render();
+};
+
+/* ==================== 启动 ==================== */
+if (location.hash) {
+  const v = location.hash.slice(1);
+  if (!META[v]) location.hash = 'dashboard';
+}
+/* 演示模式：admin.html?demo=1 自动以总部管理员登录（仅演示用） */
+if (new URLSearchParams(location.search).get('demo') === '1') {
+  setTimeout(() => document.getElementById('gBtn').click(), 100);
+}
+</script>
+</body>
+</html>

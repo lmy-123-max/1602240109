@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "操作留痕",
+  "usingComponents": {
+    "login-panel": "../../components/login-panel/login-panel"
+  }
+}

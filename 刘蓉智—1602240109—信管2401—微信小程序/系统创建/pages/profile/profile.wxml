@@ -1,0 +1,92 @@
+<!--pages/profile/profile.wxml-->
+<block wx:if="{{authState === 'checking'}}">
+  <view class="loading-tip">登录状态检查中...</view>
+</block>
+
+<view class="me-hero">
+  <block wx:if="{{authState === 'signed-in' && user}}">
+    <view class="avatar">{{avatarText}}</view>
+    <view class="me-name">{{user.name || '牙科门诊用户'}}</view>
+    <view class="me-sub">{{user.email || '已登录'}}</view>
+  </block>
+  <block wx:else>
+    <view class="avatar avatar-guest">👤</view>
+    <view class="me-name">未登录</view>
+    <view class="me-sub">登录后可预约挂号、查看病历与缴费</view>
+  </block>
+</view>
+
+<block wx:if="{{authState === 'signed-out'}}">
+  <view class="card">
+    <login-panel bind:signedin="onSignedIn" />
+  </view>
+</block>
+
+<block wx:if="{{authState === 'signed-in'}}">
+  <view class="stat card">
+    <view class="stat-item" bindtap="goTab" data-url="/pages/appointments/appointments">
+      <view class="stat-num">{{statAppts}}</view><view class="stat-label">预约</view>
+    </view>
+    <view class="stat-item" bindtap="goBills">
+      <view class="stat-num stat-warn">{{statUnpaid}}</view><view class="stat-label">待缴费</view>
+    </view>
+    <view class="stat-item" bindtap="goRecords">
+      <view class="stat-num stat-mint">{{statRecords}}</view><view class="stat-label">病历</view>
+    </view>
+  </view>
+
+  <view class="card menu">
+    <view class="menu-item" bindtap="goRegister"><text class="mi-ico">📝</text>注册 / 入驻（患者建档 · 牙医入驻）<text class="mi-arrow">›</text></view>
+    <view class="menu-item" bindtap="goBills"><text class="mi-ico">💳</text>门诊缴费<text class="mi-arrow">›</text></view>
+    <view class="menu-item" bindtap="goRecords"><text class="mi-ico">📋</text>我的病历<text class="mi-arrow">›</text></view>
+    <view class="menu-item" bindtap="goQueue"><text class="mi-ico">🚶</text>候诊进度<text class="mi-arrow">›</text></view>
+    <view class="menu-item" bindtap="onCall"><text class="mi-ico">📞</text>联系门诊<text class="mi-arrow">›</text></view>
+    <view class="menu-item" bindtap="onAbout"><text class="mi-ico">ℹ️</text>关于门诊<text class="mi-arrow">›</text></view>
+  </view>
+
+  <!-- 员工工作台入口：绑定工号后进入对应身份的工作台 -->
+  <view class="sect">员工工作台</view>
+  <view class="card staff-card">
+    <block wx:if="{{staffInfo}}">
+      <view class="staff-row">
+        <view class="staff-badge staff-badge-{{staffInfo.role}}">
+          {{staffInfo.role === 'doctor' ? '🦷' : staffInfo.role === 'store_admin' ? '🏪' : '🏢'}}
+        </view>
+        <view class="staff-main">
+          <view class="staff-name">{{staffInfo.name}} · {{staffRoleText}}</view>
+          <view class="staff-code">工号 {{staffInfo.staffCode}}{{staffInfo.title ? ' · ' + staffInfo.title : ''}}</view>
+        </view>
+        <view class="staff-unbind" bindtap="onUnbindStaff">解绑</view>
+      </view>
+      <button class="btn-staff" bindtap="goWorkbench">
+        {{staffInfo.role === 'doctor' ? '进入医生工作台' : '进入管理工作台'}} ›
+      </button>
+    </block>
+    <block wx:else>
+      <view class="staff-bind-title">门诊员工？绑定工号进入专属工作台</view>
+      <view class="staff-bind-row">
+        <input
+          class="staff-input"
+          placeholder="输入员工工号，如 D101"
+          value="{{staffCodeInput}}"
+          bindinput="onStaffInput"
+        />
+        <button class="btn-staff-sm" bindtap="onBindStaff" disabled="{{staffBinding}}">
+          {{staffBinding ? '绑定中…' : '绑定'}}
+        </button>
+      </view>
+      <view class="staff-hint">演示工号：D101-D106 牙医 · S201/S202 门店管理员 · H301 总部管理员；无工号？牙医可在「注册 / 入驻」页自助入驻</view>
+    </block>
+  </view>
+
+  <!-- 账户与隐私：合规注销入口 -->
+  <view class="sect">账户与隐私</view>
+  <view class="card privacy-card">
+    <view class="menu-item" bindtap="onPrivacy"><text class="mi-ico">🛡️</text>隐私与合规说明<text class="mi-arrow">›</text></view>
+    <view class="menu-item" bindtap="onCancelAccount"><text class="mi-ico">🗑️</text>注销账户（匿名化处理）<text class="mi-arrow">›</text></view>
+  </view>
+
+  <button class="btn-ghost logout" bindtap="onSignOut">退出登录</button>
+</block>
+
+<view class="footer-tip">牙科门诊小程序 v1.1 · 已按《个人信息保护法》落实告知同意、操作留痕、账户注销与匿名化 · 医保甲/乙类按规定报销</view>

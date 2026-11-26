@@ -1,0 +1,9 @@
+{
+  "name": "dental-clinic-miniprogram",
+  "version": "1.0.0",
+  "private": true,
+  "description": "牙科门诊微信小程序（患者端）",
+  "dependencies": {
+    "@tencent-ai/workbuddy-cloud-sdk": "^0.1.4-dev.71e5d1e.202611161655"
+  }
+}

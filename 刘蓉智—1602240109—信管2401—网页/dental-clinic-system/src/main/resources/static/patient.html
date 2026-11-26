@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>牙科连锁 · 患者服务门户</title>
+<style>
+:root{
+  --brand:#0f9d76; --brand-d:#0b7f5f; --brand-l:#22b98e; --brand-bg:#e8f8f0;
+  --ink:#1b2320; --muted:#7c8a86; --line:#e4eae7; --bg:#f3f8f6;
+  --warn:#d9822b; --danger:#d9534f; --blue:#2b7cd3;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+button{font-family:inherit;cursor:pointer}
+.app{display:flex;min-height:100vh}
+.side{width:230px;background:linear-gradient(185deg,#12b586 0%,#0b8a67 78%,#0a7a5b 100%);color:#d9f3ea;
+  display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;border-radius:0 20px 20px 0;overflow:hidden;z-index:30}
+.brand{padding:22px 18px 14px;display:flex;align-items:center;gap:10px}
+.brand .mark{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-size:21px}
+.brand .logo{font-size:15.5px;font-weight:700;color:#fff;line-height:1.35}
+.brand .sub{font-size:10.5px;color:#a8e6d1;letter-spacing:.4px}
+.nav{flex:1;overflow-y:auto;padding:4px 12px 18px}
+.nav .grp{font-size:11px;color:#8ed9bd;padding:14px 12px 6px;letter-spacing:1.5px}
+.nav button{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;color:#d9f3ea;
+  font-size:13.5px;padding:9px 12px;text-align:left;border-radius:11px;margin:1px 0;transition:.15s}
+.nav button:hover{background:rgba(255,255,255,.1);color:#fff}
+.nav button.on{background:rgba(255,255,255,.2);color:#fff;font-weight:600;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+.nav button .ic{width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:13.5px;flex:0 0 26px}
+.side-foot{padding:12px 18px;font-size:11px;color:#7fc7a8;border-top:1px solid rgba(255,255,255,.12)}
+.main{margin-left:230px;flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{background:#fff;border-bottom:1px solid var(--line);padding:0 26px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:20;height:58px}
+.topbar h2{font-size:15px;font-weight:700;color:#0b7f5f;display:flex;align-items:center;gap:8px}
+.topbar .right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.topbar .link{font-size:12.5px;color:var(--muted);text-decoration:none}
+.topbar .link:hover{color:var(--brand)}
+.who{display:flex;align-items:center;gap:10px}
+.who .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#22b98e,#0f9d76);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+.who .nm{font-size:13px;font-weight:600}
+.who .rl{font-size:11px;color:var(--muted)}
+.btnout{border:1px solid var(--line);background:#fff;border-radius:18px;padding:6px 16px;font-size:12.5px;color:var(--muted)}
+.btnout:hover{color:var(--danger);border-color:#f0c9c7}
+.pgttl{padding:20px 26px 0}
+.pgttl h2{font-size:19px;font-weight:700;color:#12332a}
+.pgttl .desc{font-size:12.5px;color:var(--muted);margin-top:4px}
+.content{padding:18px 26px 40px}
+.btn{border:none;border-radius:8px;padding:8px 15px;font-size:13px;background:var(--brand);color:#fff}
+.btn:hover{background:var(--brand-d)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.ghost:hover{background:#f6faf8}
+.btn.sm{padding:5px 11px;font-size:12.5px;border-radius:7px}
+.btn.gray{background:#eef2f1;color:#4d5a56}
+.btn.danger{background:#fdf0ef;color:var(--danger)}
+.btn.blue{background:var(--blue);color:#fff}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.card+.card{margin-top:16px}
+.card-h{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.card-h h3{font-size:14.5px;font-weight:600;color:#12332a}
+.card-h h3::before{content:'';width:4px;height:15px;background:var(--brand);border-radius:2px;margin-right:8px;display:inline-block;vertical-align:-2px}
+.card-h .hint{font-size:12px;color:var(--muted)}
+.card-h .act{margin-left:auto;display:flex;gap:8px;align-items:center}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:12px;color:var(--muted);font-weight:500;padding:9px 10px;background:#f7fbf9;border-bottom:1px solid var(--line);white-space:nowrap}
+td{font-size:13px;padding:10px;border-bottom:1px solid #f1f5f3;vertical-align:middle}
+tbody tr:hover{background:#f8fdfb}
+.empty{padding:36px 0;text-align:center;color:var(--muted);font-size:13px}
+.tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;line-height:1.7;white-space:nowrap}
+.ok{background:#e6f6ef;color:#0f8a5f}
+.off{background:#f0f2f2;color:#8a9a95}
+.warn{background:#fdf3e6;color:#b9711f}
+.bad{background:#fdf0ef;color:#c0453f}
+.info{background:#eaf1fc;color:#2b6ca8}
+.mono{font-family:consolas,monospace;font-size:12.5px;color:#4a5b56}
+select,input,textarea{border:1px solid #dbe6e1;border-radius:8px;padding:8px 11px;font-size:13px;outline:none;background:#fff;font-family:inherit;color:var(--ink)}
+select:focus,input:focus,textarea:focus{border-color:var(--brand-l);box-shadow:0 0 0 3px rgba(15,157,118,.1)}
+.fld{margin-bottom:13px}
+.fld label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:5px}
+.frow{display:flex;gap:12px}.frow .fld{flex:1}
+.rowline{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid #f1f5f3}
+.rowline:last-child{border-bottom:none}
+.rowline .grow{flex:1;min-width:0}
+.rowline .t1{font-size:13.5px;font-weight:600}
+.rowline .t2{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.6}
+.albox{background:#fff7e8;border:1px solid #ffe1ad;border-radius:12px;padding:10px 14px;font-size:12.5px;margin:12px 0;line-height:1.8}
+.albox.green{background:#e9f9f1;border-color:#b8ecd2}
+.albox b{color:var(--warn)}
+.albox.green b{color:var(--brand)}
+.banner{background:linear-gradient(120deg,#0f9d76,#22b98e 60%,#3ccfa4);border-radius:16px;color:#fff;padding:24px 28px;display:flex;align-items:center;gap:18px;box-shadow:0 14px 30px rgba(15,157,118,.22)}
+.banner .wt{font-size:20px;font-weight:800}
+.banner .wd{font-size:12.5px;opacity:.9;margin-top:6px;line-height:1.7}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.stat .lb{font-size:12.5px;color:var(--muted)}
+.stat .vl{font-size:24px;font-weight:700;margin-top:6px;color:#12332a}
+.stat .vl small{font-size:12px;font-weight:400;color:var(--muted);margin-left:4px}
+.chipgrid{display:flex;flex-wrap:wrap;gap:8px}
+.chipgrid button{border:1.5px solid var(--line);background:#fff;border-radius:16px;padding:7px 15px;font-size:12.8px;color:#42514b;cursor:pointer;font-family:inherit}
+.chipgrid button.on{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+.slotgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.slot{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fff;display:flex;align-items:center;gap:12px}
+.slot .grow{flex:1;min-width:0}
+.dept{border:1.5px solid var(--line);background:#fff;border-radius:16px;padding:7px 15px;font-size:12.8px;cursor:pointer;font-family:inherit}
+.dept.on{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+.mask{position:fixed;inset:0;background:rgba(10,30,24,.45);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+.mask.on{display:flex}
+.dlg{background:#fff;border-radius:14px;width:100%;max-width:460px;padding:22px 24px}
+.dlg h3{font-size:16px;margin-bottom:12px}
+.paysel{display:flex;gap:10px;margin:14px 0}
+.paysel button{flex:1;border:2px solid var(--line);background:#fff;border-radius:12px;padding:12px;font-size:13px;cursor:pointer;font-family:inherit}
+.paysel button.on{border-color:var(--brand);background:var(--brand-bg);color:var(--brand);font-weight:600}
+#toast{position:fixed;left:50%;top:22px;transform:translateX(-50%) translateY(-16px);background:#132a22;color:#fff;
+  padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:200;max-width:70vw}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.err{background:#a8382f}
+.pager{display:flex;align-items:center;gap:10px;justify-content:flex-end;padding:12px 4px 2px;font-size:12.5px;color:var(--muted)}
+.pager button{padding:5px 12px;border:1px solid var(--line);background:#fff;border-radius:6px;cursor:pointer;color:#3f4d49;font-size:12.5px}
+.pager button:disabled{opacity:.45;cursor:not-allowed}
+.hcard{background:linear-gradient(135deg,#12b586,#0b7f5f);border-radius:16px;color:#fff;padding:20px 24px;display:flex;align-items:center;gap:16px}
+.hcard .no{font-size:24px;font-weight:800;letter-spacing:3px}
+.hcard .meta{font-size:12px;opacity:.9;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="app" id="app" style="display:none">
+  <aside class="side">
+    <div class="brand">
+      <div class="mark">🦷</div>
+      <div><div class="logo">患者服务门户<br><span class="sub">PATIENT SERVICE PORTAL</span></div></div>
+    </div>
+    <nav class="nav" id="nav">
+      <div class="grp">我的服务</div>
+      <button data-v="dash" class="on"><span class="ic">◎</span>服务工作台</button>
+      <button data-v="book"><span class="ic">📅</span>预约挂号</button>
+      <button data-v="checkin"><span class="ic">🏥</span>就诊报到</button>
+      <button data-v="pay"><span class="ic">💰</span>门诊缴费</button>
+      <button data-v="report"><span class="ic">📖</span>报告查询</button>
+      <button data-v="appts"><span class="ic">🗓</span>我的预约</button>
+      <button data-v="card"><span class="ic">🪪</span>健康卡·过敏史</button>
+      <div class="grp">门诊信息</div>
+      <button data-v="notices"><span class="ic">📢</span>门诊公告</button>
+    </nav>
+    <div class="side-foot">牙科连锁 · 患者端（网页版）</div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <h2>🦷 牙科连锁 · 患者服务</h2>
+      <div class="right">
+        <a class="link" href="/index.html">返回官网</a>
+        <button class="btnout" onclick="logout()">退出登录</button>
+        <div class="who">
+          <div class="avatar" id="whoAvatar">患</div>
+          <div><div class="nm" id="whoName">—</div><div class="rl" id="whoRole">患者 · 患者服务门户</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="pgttl">
+      <h2 id="pgTitle">服务工作台</h2>
+      <div class="desc" id="pgDesc">您的就诊安排、缴费与报告都在这里</div>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<!-- 支付弹层 -->
+<div class="mask" id="payMask" onclick="if(event.target===this)closePay()">
+  <div class="dlg">
+    <h3>门诊缴费</h3>
+    <div id="payInfo" style="font-size:14px;line-height:2"></div>
+    <div class="paysel" id="chSel">
+      <button class="on" data-ch="微信">💚 微信</button>
+      <button data-ch="支付宝">💙 支付宝</button>
+      <button data-ch="现金">💵 现金</button>
+      <button data-ch="医保结算">💳 医保</button>
+    </div>
+    <button class="btn" style="width:100%;padding:11px" onclick="doPay()">确认支付</button>
+  </div>
+</div>
+<!-- 补录过敏弹层 -->
+<div class="mask" id="alMask" onclick="if(event.target===this)this.classList.remove('on')">
+  <div class="dlg">
+    <h3>补录过敏记录</h3>
+    <div class="fld"><label>过敏原名称</label><input id="alName" placeholder="如：青霉素 / 乳胶 / 树脂"></div>
+    <div class="frow">
+      <div class="fld"><label>严重度 1轻-3重</label><input id="alSev" type="number" value="2" min="1" max="3"></div>
+      <div class="fld"><label>反应描述</label><input id="alDesc" placeholder="如：皮试阳性"></div>
+    </div>
+    <button class="btn" style="width:100%;padding:11px" onclick="addAllergy()">保存</button>
+  </div>
+</div>
+<!-- 注销账户弹层 -->
+<div class="mask" id="cancelMask" onclick="if(event.target===this)this.classList.remove('on')">
+  <div class="dlg">
+    <h3>注销账户</h3>
+    <div style="font-size:13px;color:var(--muted);line-height:2;margin-bottom:10px">
+      注销后：<b>姓名 / 手机 / 证件 / 过敏史</b>等个人信息将匿名化清除，账号不可再登录；<br>
+      病历与账单依《医疗机构病历管理规定》匿名留存；操作写入系统留痕。</div>
+    <div id="cancelInfo" style="font-size:13px;margin-bottom:10px"></div>
+    <div class="fld"><label>输入登录密码确认</label><input id="cancelPwd" type="password" placeholder="登录密码"></div>
+    <button class="btn danger" style="width:100%;padding:11px" onclick="doCancel()">确认注销</button>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+const API='/api';
+const SLOTS={1:'上午',2:'下午',3:'晚间'};
+const AS={0:'已提交',1:'已确认',2:'已到诊',3:'诊疗中',4:'已完成',5:'已取消',6:'爽约'};
+const BS={0:'待支付',1:'已支付',2:'已开票',3:'部分退款',4:'已退款'};
+let me=null,stores=[],doctors=[],items=[],pick=[],payBillId=null,payChannel='微信',curAppt=null;
+
+function toast(t,ok=true){const el=document.getElementById('toast');el.textContent=t;el.className=ok?'on':'on err';setTimeout(()=>el.className='',2600)}
+async function api(p,opt={}){
+  const r=await fetch(API+p,{method:opt.method||'GET',headers:{'Content-Type':'application/json'},body:opt.body?JSON.stringify(opt.body):undefined});
+  const j=await r.json();
+  if(j.code!==200&&j.code!==0){toast(j.msg||'请求失败',false);throw new Error(j.msg)}
+  return j.data;
+}
+/* 登录守卫：未登录回官网登录页 */
+/* 演示快捷登录：?demo=账号（默认密码 123456） */
+(function(){
+  const q=new URLSearchParams(location.search);
+  if(q.get('demo')){
+    api('/auth/login',{method:'POST',body:{account:q.get('demo'),password:q.get('pwd')||'123456'}}).then(d=>{
+      d.account=q.get('demo');
+      sessionStorage.setItem('dental_me',JSON.stringify(d));
+      location.href=location.pathname+(location.hash||'');
+    });
+  }
+})();
+me=JSON.parse(sessionStorage.getItem('dental_me')||'null');
+const __demo=new URLSearchParams(location.search).get('demo');
+if(!me&&__demo){/* 演示登录进行中：等待写入凭证后自动刷新 */}
+else if(!me||me.role!=='patient'){location.href='/index.html';throw new Error('redirect')}
+document.getElementById('app').style.display='flex';
+document.getElementById('whoName').textContent=me.user.realName;
+document.getElementById('whoAvatar').textContent=(me.user.realName||'患').slice(0,1);
+document.getElementById('whoRole').textContent='患者 · '+me.account;
+function logout(){sessionStorage.removeItem('dental_me');location.href='/index.html'}
+
+const VIEWS={};
+const META={
+  dash:['服务工作台','今日到院安排、健康档案与最新公告'],
+  book:['预约挂号','选门店 → 选科室 → 选医生 → 选时段，四步锁号'],
+  checkin:['就诊报到','到院后一键签到，状态变更为已到诊'],
+  pay:['门诊缴费','诊疗后自动生成账单，在线支付或申请退款'],
+  report:['报告查询','历史诊疗记录、处置明细与过敏校验结果'],
+  appts:['我的预约','全部预约记录，2 小时外取消免费'],
+  card:['健康卡·过敏史','电子健康卡与在档过敏记录维护'],
+  notices:['门诊公告','门诊发布的最新安排与活动']
+};
+const APPT_STATUS={0:['已提交','info'],1:['已确认','ok'],2:['已到诊','info'],3:['诊疗中','warn'],4:['已完成','off'],5:['已取消','bad'],6:['爽约','bad']};
+const BILL_STATUS={0:['待支付','warn'],1:['已支付','ok'],2:['已开票','info'],3:['部分退款','off'],4:['全额退款','bad']};
+function st(m,v){const d=m[v]||['未知','off'];return '<span class="tag '+d[1]+'">'+d[0]+'</span>'}
+const esc=s=>String(s===null||s===undefined?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money=v=>v===null||v===undefined?'-':'¥ '+Number(v).toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});
+const dateOf=v=>v?String(v).slice(0,10):'-';
+
+const PAGE={size:12,cur:{}};
+window.__rerender=window.__rerender||{};
+function paged(key,rowsHtml,total){
+  const max=Math.max(1,Math.ceil(total/PAGE.size));
+  if(!PAGE.cur[key]||PAGE.cur[key]>max)PAGE.cur[key]=1;
+  const p=PAGE.cur[key];
+  let h='<div class="pager">';
+  if(total>PAGE.size){h+='<button '+(p<=1?'disabled':'')+' onclick="pageGo(\''+key+'\',-1)">上一页</button><span>第 '+p+' / '+max+' 页 · 共 '+total+' 条</span><button '+(p>=max?'disabled':'')+' onclick="pageGo(\''+key+'\',1)">下一页</button>'}
+  else{h+='<span>共 '+total+' 条</span>'}
+  return h+'</div>';
+}
+function pageGo(key,d){PAGE.cur[key]=Math.max(1,(PAGE.cur[key]||1)+d);if(window.__rerender[key])window.__rerender[key]()}
+
+function setView(v){
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  const m=META[v]||['患者服务',''];
+  document.getElementById('pgTitle').textContent=m[0];
+  document.getElementById('pgDesc').textContent=m[1];
+  location.hash=v;
+  document.getElementById('content').innerHTML='<div class="empty">加载中…</div>';
+  VIEWS[v]().catch(e=>{document.getElementById('content').innerHTML='<div class="empty">'+esc(e.message)+'</div>'});
+}
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('button[data-v]');if(b)setView(b.dataset.v)});
+
+/* ================= 公共数据 ================= */
+async function loadBase(){
+  stores=await api('/common/stores');
+  doctors=await api('/common/doctors');
+  items=await api('/common/items');
+}
+const CATMAP={'洁牙':['牙周','洁牙'],'补牙':['补牙','牙体牙髓'],'根管治疗':['牙体牙髓'],'牙周治疗':['牙周'],
+  '拔牙':['口腔外科'],'种植牙':['种植'],'正畸':['正畸'],'修复美学':['修复'],'儿童牙科':['儿童'],'全科':['全科']};
+const DEPTS=['洁牙','补牙','根管治疗','牙周治疗','拔牙','种植牙','正畸','修复美学','儿童牙科','全科'];
+
+/* ================= 工作台 ================= */
+VIEWS.dash=async()=>{
+  const [appts,als,notices,p]=await Promise.all([
+    api('/appointment/my?patientId='+me.roleId),
+    api('/patient/'+me.roleId+'/allergies').catch(()=>[]),
+    api('/notice/published').catch(()=>[]),
+    api('/patient/'+me.roleId).catch(()=>null)
+  ]);
+  const today=new Date().toISOString().slice(0,10);
+  const td=appts.filter(a=>a.visitDate===today&&a.status>=0&&a.status<=3);
+  const pending=appts.filter(a=>a.status===0||a.status===1).length;
+  const unpaid=(await api('/bill/by-patient?patientId='+me.roleId).catch(()=>[])).filter(b=>b.status===0);
+  let h='<div class="banner"><div><div class="wt">'+esc(me.user.realName)+'，您好 👋</div>'+
+    '<div class="wd">今天是 '+today+' · 今日到院 <b>'+td.length+'</b> 项安排 · 待确认预约 <b>'+pending+'</b> 单 · 待缴费账单 <b>'+unpaid.length+'</b> 张</div></div>'+
+    '<div style="margin-left:auto"><button class="btn" style="background:#fff;color:#0f9d76;font-weight:600;border-radius:20px;padding:10px 22px" onclick="setView(\'book\')">立即预约挂号</button></div></div>';
+  h+='<div class="stats" style="margin-top:16px">'+
+    '<div class="stat"><div class="lb">今日到院安排</div><div class="vl">'+td.length+'<small>项</small></div></div>'+
+    '<div class="stat"><div class="lb">待确认 / 待就诊</div><div class="vl">'+pending+'<small>单</small></div></div>'+
+    '<div class="stat"><div class="lb">待缴费账单</div><div class="vl" style="color:'+(unpaid.length?'#d9534f':'#12332a')+'">'+unpaid.length+'<small>张</small></div></div>'+
+    '<div class="stat"><div class="lb">在档过敏记录</div><div class="vl">'+als.length+'<small>条</small></div></div></div>';
+  if(als.length){
+    h+='<div class="albox" style="margin-top:16px">⚠️ <b>过敏提醒</b>：您在档过敏史：'+als.map(x=>esc(x.allergenName)).join('、')+'。就诊时请主动告知医生；医生开单时系统将自动拦截与过敏史冲突的诊疗项目。</div>';
+  }else{
+    h+='<div class="albox green" style="margin-top:16px">✅ <b>暂无过敏记录</b>：如发现药物/材料过敏，请在「健康卡·过敏史」及时补录，保障就诊安全。</div>';
+  }
+  h+='<div class="card" style="margin-top:16px"><div class="card-h"><h3>今日到院提醒</h3><span class="hint">请提前 10-20 分钟到院报到</span>'+
+    '<div class="act"><button class="btn ghost sm" onclick="setView(\'checkin\')">去报到</button></div></div>';
+  h+=td.length?td.map(a=>'<div class="rowline"><div style="font-size:24px">🦷</div>'+
+    '<div class="grow"><div class="t1">'+esc(a.timeSlot||'今日')+' · <span class="mono">'+esc(a.appointmentNo)+'</span></div>'+
+    '<div class="t2">挂号费 ¥'+(a.depositAmount||20)+' 已预付 · '+esc(a.doctorName||'')+'</div></div>'+st(APPT_STATUS,a.status)+'</div>').join('')
+    :'<div class="empty">今日无到院安排，可到「预约挂号」预约</div>';
+  h+='</div>';
+  h+='<div class="card"><div class="card-h"><h3>门诊公告</h3><div class="act"><button class="btn ghost sm" onclick="setView(\'notices\')">全部公告</button></div></div>';
+  h+=notices.length?notices.slice(0,3).map(n=>'<div class="rowline"><div style="font-size:22px">📢</div>'+
+    '<div class="grow"><div class="t1">'+esc(n.title)+'</div><div class="t2">'+esc(n.content||'')+'</div></div>'+
+    '<div style="font-size:11px;color:var(--muted);white-space:nowrap">'+esc((n.publishTime||'').slice(0,10))+'</div></div>').join(''):'<div class="empty">暂无公告</div>';
+  h+='</div>';
+  if(p){
+    h+='<div class="card"><div class="card-h"><h3>我的健康卡</h3><div class="act"><button class="btn ghost sm" onclick="setView(\'card\')">查看详情</button></div></div>'+
+      '<div class="hcard"><div style="font-size:34px">🪪</div><div><div style="font-size:12px;opacity:.85">电子健康卡</div>'+
+      '<div class="no">'+esc(p.healthCardNo)+'</div><div class="meta">'+esc(me.user.realName)+' · 默认门店 #'+(p.defaultStoreId||'-')+'</div></div></div></div>';
+  }
+  document.getElementById('content').innerHTML=h;
+};
+
+/* ================= 预约挂号 ================= */
+let bStoreDep=0;
+VIEWS.book=async()=>{
+  if(!stores.length)await loadBase();
+  const today=new Date().toISOString().slice(0,10);
+  let h='<div class="card"><div class="card-h"><h3>预约条件</h3><span class="hint">预付挂号费 20 元锁号 · 就诊前 2 小时外取消免费</span></div>'+
+    '<div class="frow"><div class="fld"><label>① 选择门店</label><select id="bStore" onchange="loadSlots()">'+
+    stores.map(s=>'<option value="'+s.storeId+'">'+esc(s.storeName)+'</option>').join('')+'</select></div>'+
+    '<div class="fld"><label>③ 选择牙医</label><select id="bDoctor" onchange="loadSlots()"></select></div></div>'+
+    '<div class="fld" style="margin-bottom:2px"><label>② 选择科室（牙医类别）</label><div class="chipgrid" id="deptTabs" style="margin-top:6px"></div></div>'+
+    '<div class="fld" style="margin-top:12px"><label>④ 选择就诊日期（再选下方时段）</label><input type="date" id="bDate" value="'+today+'" onchange="loadSlots()"></div></div>';
+  h+='<div id="bookAllergy"></div><div id="docTip"></div><div id="slotList"><div class="empty">加载中...</div></div>';
+  document.getElementById('content').innerHTML=h;
+  renderDeptTabs();
+  const als=await api('/patient/'+me.roleId+'/allergies').catch(()=>[]);
+  const ba=document.getElementById('bookAllergy');
+  ba.innerHTML=als.length?'<div class="albox">⚠️ <b>个人信息提醒</b>：您在档过敏史：'+als.map(x=>esc(x.allergenName)).join('、')+'。预约请留意诊疗项目类型，医生开单时系统将自动校验过敏冲突。</div>'
+    :'<div class="albox green">✅ 您暂无过敏记录；如发现药物/材料过敏，请在「健康卡·过敏史」及时补录。</div>';
+  loadSlots();
+};
+function renderDeptTabs(){
+  const el=document.getElementById('deptTabs');
+  el.innerHTML='<button class="dept on" data-c="">全部科室</button>'+DEPTS.map(d=>'<button class="dept" data-c="'+d+'">'+d+'</button>').join('');
+  el.querySelectorAll('.dept').forEach(b=>b.onclick=()=>{
+    el.querySelectorAll('.dept').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');filterDoctors();
+  });
+}
+function activeDept(){const b=document.querySelector('#deptTabs .dept.on');return b?b.dataset.c:''}
+function filterDoctors(){
+  const sel=document.getElementById('bDoctor');
+  const cat=activeDept();
+  const kws=CATMAP[cat]||[];
+  const list=doctors.filter(d=>!kws.length||kws.some(k=>(d.specialty||'').includes(k)));
+  sel.innerHTML='<option value="">'+(kws.length?cat+'·牙医（'+list.length+' 名）':'全部牙医（'+list.length+' 名）')+'</option>'+
+    list.map(d=>'<option value="'+d.doctorId+'">'+esc(d.doctorName)+'（'+esc(d.title)+'·'+esc(d.specialty||'全科')+'）</option>').join('');
+  loadSlots();
+}
+async function loadSlots(){
+  const storeId=document.getElementById('bStore').value;
+  const docId=document.getElementById('bDoctor').value;
+  const date=document.getElementById('bDate').value;
+  const tip=document.getElementById('docTip');
+  if(docId){
+    const d=doctors.find(x=>x.doctorId==docId);
+    if(d){tip.innerHTML='<div class="albox">🦷 <b>医生类型提醒</b>：'+esc(d.doctorName)+' 是【'+esc(d.specialty||'全科')+'】专科医生（'+esc(d.title)+'）。若您的症状不属于该科室，建议返回②更换科室筛选。</div>';}
+  }else{tip.innerHTML=''}
+  let list=await api('/schedule/published?storeId='+storeId+'&date='+date);
+  if(docId)list=list.filter(s=>s.doctorId==docId);
+  else{
+    const kws=CATMAP[activeDept()]||[];
+    if(kws.length){
+      const ids=doctors.filter(d=>kws.some(k=>(d.specialty||'').includes(k))).map(d=>d.doctorId);
+      list=list.filter(s=>ids.includes(s.doctorId));
+    }
+  }
+  const el=document.getElementById('slotList');
+  if(!list.length){el.innerHTML='<div class="card"><div class="empty">该日期暂无已发布号源（法定节假日不可预约）</div></div>';return}
+  const dmap=Object.fromEntries(doctors.map(d=>[d.doctorId,d.doctorName+'（'+(d.specialty||'全科')+'）']));
+  el.innerHTML='<div class="card"><div class="card-h"><h3>可选号源</h3><span class="hint">共 '+list.length+' 个时段</span></div><div class="slotgrid">'+
+    list.map(s=>{
+      const left=s.quotaTotal-s.quotaUsed;
+      return '<div class="slot"><div style="font-size:26px">🦷</div>'+
+        '<div class="grow"><div style="font-size:13.5px;font-weight:600">'+esc(dmap[s.doctorId]||'牙医'+s.doctorId)+'</div>'+
+        '<div style="font-size:12px;color:var(--muted);margin-top:3px">'+esc(s.workDate)+' '+SLOTS[s.timeSlot]+' · 牙椅 #'+(s.chairId||'-')+' · 挂号费 ¥20</div></div>'+
+        '<div style="text-align:right"><div style="font-size:12px;color:'+(left>0?'var(--brand)':'var(--danger)')+';margin-bottom:6px">'+(left>0?'余 '+left+'/'+s.quotaTotal:'已满')+'</div>'+
+        (left>0?'<button class="btn sm" onclick="book('+s.scheduleId+')">预约</button>':'')+'</div></div>';
+    }).join('')+'</div></div>';
+}
+async function book(sid){
+  if(!confirm('确认预约该号源？\n\n· 需预付挂号费 20 元\n· 就诊 2 小时外取消免费退回\n· 2 小时内取消收取 50% 违约金'))return;
+  await api('/appointment/book',{method:'POST',body:{patientId:me.roleId,scheduleId:sid}});
+  toast('预约成功！挂号费 20 元已预付');
+  loadSlots();
+}
+
+/* ================= 就诊报到 ================= */
+VIEWS.checkin=async()=>{
+  const today=new Date().toISOString().slice(0,10);
+  const list=(await api('/appointment/my?patientId='+me.roleId)).filter(a=>a.visitDate===today&&a.status<=1);
+  let h='<div class="card"><div class="card-h"><h3>今日待报到</h3><span class="hint">'+today+' · 签到后状态变为「已到诊」，进入候诊队列</span></div>';
+  h+=list.length?list.map(a=>'<div class="rowline"><div style="font-size:22px">🏥</div>'+
+    '<div class="grow"><div class="t1"><span class="mono">'+esc(a.appointmentNo)+'</span> · '+esc(a.timeSlot||'')+'</div>'+
+    '<div class="t2">挂号费 ¥'+(a.depositAmount||20)+' 已预付 · '+esc(a.doctorName||'')+'</div></div>'+
+    st(APPT_STATUS,a.status)+'<button class="btn sm" onclick="checkin('+a.appointmentId+')">签到</button></div>').join('')
+    :'<div class="empty">今日暂无待报到预约</div>';
+  h+='</div>';
+  document.getElementById('content').innerHTML=h;
+};
+async function checkin(id){
+  await api('/appointment/'+id+'/checkin',{method:'POST'});
+  toast('签到成功，状态：已到诊');
+  setView('checkin');
+}
+
+/* ================= 门诊缴费 ================= */
+VIEWS.pay=async()=>{
+  const bills=await api('/bill/by-patient?patientId='+me.roleId);
+  window.__payBills=bills;
+  const insSum=bills.filter(b=>b.status===1||b.status===2).reduce((s,b)=>s+(b.insuranceCover||0),0);
+  let h='<div class="card"><div class="card-h"><h3>缴费账单</h3><span class="hint">共 '+bills.length+' 张 · 挂号费抵扣 · 医保统筹已报销 ¥'+insSum.toFixed(2)+'</span></div>';
+  h+='<div class="albox green" style="margin-bottom:12px"><b>💳 医保政策（医保定点机构）：</b>补牙、根管治疗、拔牙、牙周治疗等治疗类项目属<b>医保甲类全额报销</b>；显微根管、牙周系统治疗、嵌体等属<b>乙类报销 70%</b>；种植、正畸、烤瓷/全瓷冠修复、美白类为<b>自费项目</b>。报销额由价目库医保比例自动核算。</div>';
+  if(!bills.length){h+='<div class="empty">暂无账单（就诊提交病历后自动生成）</div></div>';document.getElementById('content').innerHTML=h;return}
+  h+='<table><thead><tr><th>单号</th><th>合计</th><th>挂号抵扣</th><th>医保报销</th><th>个人自付</th><th>渠道</th><th>状态</th><th style="width:150px">操作</th></tr></thead><tbody>'+
+    bills.map(b=>'<tr><td class="mono">'+esc(b.billNo)+'</td><td>'+money(b.totalAmount)+'</td><td>'+money(b.discount)+'</td>'+
+    '<td style="color:#1a7f4f"><b>'+(b.insuranceCover>0?'−'+money(b.insuranceCover):'-')+'</b></td><td><b>'+money(b.selfPay!=null?b.selfPay:b.payable)+'</b></td>'+
+    '<td>'+esc(b.payChannel||'-')+'</td><td>'+st(BILL_STATUS,b.status)+'</td><td>'+
+    (b.status===0?'<button class="btn sm" onclick="openPay('+b.billId+')">支付</button>':'')+
+    (b.status===1?'<button class="btn danger sm" onclick="refund('+b.billId+')">退款</button>':'')+
+    '</td></tr>').join('')+'</tbody></table></div>';
+  document.getElementById('content').innerHTML=h;
+};
+function openPay(id){
+  payBillId=id;
+  const b=(window.__payBills||[]).find(x=>x.billId===id);
+  const pay=b&&b.selfPay!=null?b.selfPay:null;
+  document.getElementById('payInfo').innerHTML='应付金额：<b style="color:var(--danger);font-size:20px">'+money(pay!=null?pay:(b?b.payable:0))+'</b>'+
+    (b&&b.insuranceCover>0?'<br><span style="font-size:13px;color:#1a7f4f">医保统筹已报销 '+money(b.insuranceCover)+'（甲类全额 / 乙类 70%）</span>':'')+
+    '<br><span style="font-size:12px;color:var(--muted)">预付挂号费已在账单中抵扣</span>';
+  document.getElementById('payMask').classList.add('on');
+}
+function closePay(){document.getElementById('payMask').classList.remove('on')}
+document.querySelectorAll('#chSel button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#chSel button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');payChannel=b.dataset.ch;
+});
+async function doPay(){
+  await api('/bill/'+payBillId+'/pay',{method:'POST',body:{payChannel}});
+  closePay();toast('支付成功，挂号费已抵扣诊疗费');
+  setView('pay');
+}
+async function refund(id){
+  if(!confirm('确认退款？将采用红冲方式，原账单保留。'))return;
+  await api('/bill/'+id+'/refund',{method:'POST'});
+  toast('退款成功（红冲）');setView('pay');
+}
+
+/* ================= 报告查询 ================= */
+VIEWS.report=async()=>{
+  const recs=await api('/treatment/by-patient?patientId='+me.roleId);
+  let h='<div class="card"><div class="card-h"><h3>诊疗记录</h3><span class="hint">共 '+recs.length+' 份病历</span></div>';
+  if(!recs.length){h+='<div class="empty">暂无诊疗记录</div></div>';document.getElementById('content').innerHTML=h;return}
+  h+='<div id="recBody">';
+  for(const r of recs){
+    const ds=await api('/treatment/record/'+r.recordId+'/details').catch(()=>[]);
+    h+='<div style="border-bottom:1px solid #f1f5f3;padding:12px 4px">'+
+      '<div style="display:flex;align-items:center;gap:8px">'+
+      '<span class="tag '+(r.allergyCheck===1?'ok':'bad')+'">'+(r.allergyCheck===1?'过敏校验通过':'过敏拦截')+'</span>'+
+      '<b style="font-size:14px">'+esc(r.diagnosis||'诊疗记录')+'</b>'+
+      '<span style="margin-left:auto;font-size:11px;color:var(--muted)">病历#'+r.recordId+'</span></div>'+
+      '<div style="font-size:12px;color:var(--muted);margin-top:6px">主诉：'+esc(r.chiefComplaint||'-')+'　牙位：'+esc(r.toothPosition||'-')+'</div>'+
+      (ds.length?'<table style="margin-top:8px"><thead><tr><th>处置项目</th><th>数量</th><th>单价</th><th>小计</th></tr></thead><tbody>'+
+        ds.map(d=>{const it=items.find(i=>i.itemId===d.itemId);return '<tr><td>'+esc(it?it.itemName:'项目#'+d.itemId)+'</td><td>'+d.quantity+'</td><td>'+money(d.unitPrice)+'</td><td>'+money(d.unitPrice*d.quantity)+'</td></tr>'}).join('')+
+        '</tbody></table>':'')+
+      '</div>';
+  }
+  h+='</div></div>';
+  document.getElementById('content').innerHTML=h;
+};
+
+/* ================= 我的预约 ================= */
+VIEWS.appts=async()=>{
+  const list=await api('/appointment/my?patientId='+me.roleId);
+  window.__rerender.appts=render;
+  function render(){
+    const p=PAGE.cur.appts||1;
+    const slice=list.slice((p-1)*PAGE.size,p*PAGE.size);
+    let h='<div class="card"><div class="card-h"><h3>全部预约</h3><span class="hint">共 '+list.length+' 单 · 距就诊 2 小时外取消免费退回</span></div>';
+    h+=list.length?'<table><thead><tr><th>预约号</th><th>就诊日期</th><th>时段</th><th>挂号费</th><th>违约金</th><th>状态</th><th style="width:100px">操作</th></tr></thead><tbody>'+
+      slice.map(a=>'<tr><td class="mono">'+esc(a.appointmentNo)+'</td><td>'+dateOf(a.visitDate)+'</td><td>'+esc(a.timeSlot||'-')+'</td>'+
+      '<td>'+money(a.depositAmount)+'</td><td>'+(a.cancelFee>0?money(a.cancelFee):'-')+'</td><td>'+st(APPT_STATUS,a.status)+'</td><td>'+
+      (a.status<=1?'<button class="btn danger sm" onclick="cancelAppt('+a.appointmentId+')">取消</button>':'')+'</td></tr>').join('')+
+      '</tbody></table>'+paged('appts',null,list.length)
+      :'<div class="empty">暂无预约，去「预约挂号」锁定号源</div>';
+    document.getElementById('content').innerHTML=h+'</div>';
+  }
+  render();
+};
+async function cancelAppt(id){
+  const reason=prompt('请输入取消原因：');if(reason===null)return;
+  const a=await api('/appointment/'+id+'/cancel',{method:'POST',body:{patientId:me.roleId,reason}});
+  toast(a.cancelFee>0?'已取消，距就诊不足 2 小时，收取违约金 ¥'+a.cancelFee:'已取消，挂号费将退回');
+  setView('appts');
+}
+
+/* ================= 健康卡 · 过敏史 ================= */
+VIEWS.card=async()=>{
+  const p=await api('/patient/'+me.roleId);
+  const als=await api('/patient/'+me.roleId+'/allergies');
+  let h='<div class="hcard"><div style="font-size:38px">🪪</div><div style="flex:1"><div style="font-size:12px;opacity:.85">电子健康卡</div>'+
+    '<div class="no">'+esc(p.healthCardNo)+'</div>'+
+    '<div class="meta">'+esc(me.user.realName)+' · 默认门店 #'+(p.defaultStoreId||'-')+' · 紧急联系人 '+(p.emergencyPhone||'-')+'</div></div></div>';
+  h+='<div class="card" style="margin-top:16px"><div class="card-h"><h3>过敏史记录</h3><span class="hint">医生开单时系统将强制校验过敏冲突</span>'+
+    '<div class="act"><button class="btn sm" onclick="document.getElementById(\'alMask\').classList.add(\'on\')">＋ 补录过敏</button></div></div>';
+  h+=als.length?'<table><thead><tr><th>过敏原</th><th>严重度</th><th>反应描述</th><th>记录日期</th></tr></thead><tbody>'+
+    als.map(a=>'<tr><td><b>'+esc(a.allergenName)+'</b></td><td><span class="tag '+(a.severity>=3?'bad':a.severity===2?'warn':'off')+'">'+a.severity+' 级</span></td>'+
+    '<td>'+esc(a.reactionDesc||'-')+'</td><td>'+esc(a.recordDate||'-')+'</td></tr>').join('')+'</tbody></table>'
+    :'<div class="empty">无过敏记录</div>';
+  h+='</div>';
+  h+='<div class="card" style="margin-top:16px;border-color:#f3d6d3"><div class="card-h"><h3>账户与隐私</h3><span class="hint">依据《个人信息保护法》与《医疗机构病历管理规定》处理您的数据</span></div>'+
+    '<div style="font-size:13px;color:var(--muted);line-height:2">· 您的个人信息仅用于就诊服务，不对外提供<br>· 注销账户后：姓名、手机、证件、过敏史等个人信息将<b>匿名化清除</b>，账号不可再登录<br>· 病历与账单依法须留存，但已与您的身份解绑（仅保留匿名档案号）<br>· 注销操作将写入系统操作留痕，可审计追溯</div>'+
+    '<div style="margin-top:10px"><button class="btn danger" onclick="openCancel()">🗑 注销账户</button></div></div>';
+  document.getElementById('content').innerHTML=h;
+};
+function openCancel(){
+  document.getElementById('cancelInfo').textContent='当前账号：'+me.account+'（'+me.user.realName+'）';
+  document.getElementById('cancelPwd').value='';
+  document.getElementById('cancelMask').classList.add('on');
+}
+async function doCancel(){
+  const pwd=document.getElementById('cancelPwd').value;
+  if(!pwd){toast('请输入密码确认',false);return}
+  if(!confirm('再次确认：注销后个人信息将被匿名化清除且不可恢复，是否继续？'))return;
+  await api('/auth/cancel',{method:'POST',body:{account:me.account,password:pwd}});
+  document.getElementById('cancelMask').classList.remove('on');
+  sessionStorage.removeItem('dental_me');
+  alert('账户已注销。个人信息已匿名化处理，感谢您的使用。');
+  location.href='/index.html';
+}
+async function addAllergy(){
+  await api('/patient/'+me.roleId+'/allergies',{method:'POST',body:{
+    allergenName:document.getElementById('alName').value,
+    severity:+document.getElementById('alSev').value||1,
+    reactionDesc:document.getElementById('alDesc').value,
+    allergyType:1,source:2,recordDate:new Date().toISOString().slice(0,10)}});
+  document.getElementById('alMask').classList.remove('on');
+  toast('过敏记录已保存（就诊时将参与强制校验）');setView('card');
+}
+
+/* ================= 门诊公告 ================= */
+VIEWS.notices=async()=>{
+  const list=await api('/notice/published').catch(()=>[]);
+  let h='<div class="card"><div class="card-h"><h3>门诊公告</h3><span class="hint">已发布 '+list.length+' 条</span></div>';
+  h+=list.length?list.map(n=>'<div class="rowline"><div style="font-size:24px">📢</div>'+
+    '<div class="grow"><div class="t1">'+esc(n.title)+'</div><div class="t2">'+esc(n.content||'')+'</div></div>'+
+    '<div style="font-size:11px;color:var(--muted);white-space:nowrap">'+esc((n.publishTime||'').slice(0,10))+'</div></div>').join('')
+    :'<div class="empty">暂无公告</div>';
+  document.getElementById('content').innerHTML=h+'</div>';
+};
+
+/* ================= 启动 ================= */
+loadBase().then(()=>{
+  const v=(location.hash||'#dash').slice(1);
+  setView(META[v]?v:'dash');
+});
+</script>
+</body>
+</html>

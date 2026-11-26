@@ -1,0 +1,83 @@
+/* pages/register/register.wxss */
+.reg-hero {
+  padding: 36rpx 32rpx 26rpx;
+}
+.reg-hero-title { font-size: 38rpx; font-weight: 700; color: var(--text); }
+.reg-hero-sub { font-size: 25rpx; color: var(--muted); margin-top: 10rpx; }
+
+.reg-tabs {
+  display: flex; gap: 16rpx;
+  padding: 8rpx 32rpx 0;
+}
+.reg-tab {
+  flex: 1; text-align: center;
+  background: #fff; border: 2rpx solid var(--line);
+  border-radius: 16rpx; padding: 22rpx 0;
+  font-size: 28rpx; color: var(--muted);
+  transition: all 0.2s;
+}
+.reg-tab.on {
+  border-color: var(--brand);
+  background: #e8f2ff;
+  color: var(--brand);
+  font-weight: 600;
+}
+
+.reg-desc {
+  font-size: 24rpx; color: var(--muted);
+  padding: 18rpx 32rpx 4rpx; line-height: 1.7;
+}
+
+.reg-done { padding: 26rpx 28rpx; }
+.reg-done-row {
+  display: flex; align-items: center;
+  padding: 14rpx 0;
+}
+.reg-done-k { font-size: 25rpx; color: var(--muted); width: 160rpx; }
+.reg-done-v { font-size: 27rpx; color: var(--text); font-weight: 500; }
+.reg-hc { font-family: monospace; letter-spacing: 1rpx; }
+.reg-tip {
+  font-size: 23rpx; color: var(--mint);
+  margin-top: 14rpx; line-height: 1.7;
+}
+
+.form-card { padding: 26rpx 28rpx; }
+.f-grow { flex: 1; min-width: 0; }
+.reg-submit {
+  margin-top: 10rpx;
+  border-radius: 40rpx;
+  line-height: 84rpx;
+  font-size: 28rpx;
+}
+
+/* 合规：告知书同意与弹层 */
+.consent-card { padding: 20rpx 24rpx; }
+.consent-row { display: flex; align-items: flex-start; }
+.checkbox {
+  flex-shrink: 0;
+  width: 34rpx; height: 34rpx;
+  border: 2rpx solid #b8c0cc; border-radius: 8rpx;
+  margin-right: 16rpx;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24rpx; color: #fff;
+}
+.checkbox.on { background: #1a7ce0; border-color: #1a7ce0; }
+.consent-text { font-size: 24rpx; color: #5b6470; line-height: 1.6; }
+.consent-link { color: #1a7ce0; }
+.mask {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  display: flex; align-items: flex-end;
+}
+.sheet {
+  width: 100%;
+  background: #fff;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 40rpx 32rpx calc(40rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+.sheet-title { font-size: 34rpx; font-weight: 600; color: #17212f; text-align: center; margin-bottom: 24rpx; }
+.sheet-body { max-height: 55vh; }
+.sheet-p { font-size: 26rpx; color: #46505e; line-height: 1.7; margin-bottom: 18rpx; }
+.sheet-btn { margin-top: 16rpx; }

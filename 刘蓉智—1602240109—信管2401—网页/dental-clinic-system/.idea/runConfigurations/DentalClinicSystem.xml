@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="牙科门诊系统 (Spring Boot)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="dental-clinic-system" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.dental.clinic.DentalClinicApplication" />
+    <option name="ACTIVE_PROFILES" value="h2" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

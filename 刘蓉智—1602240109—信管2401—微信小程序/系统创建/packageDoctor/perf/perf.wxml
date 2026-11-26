@@ -1,0 +1,40 @@
+<!--packageDoctor/perf/perf.wxml-->
+<block wx:if="{{authState === 'checking'}}">
+  <view class="loading-tip">加载中...</view>
+</block>
+
+<block wx:elif="{{authState !== 'ready'}}">
+  <view class="card"><view class="empty"><text class="empty-ico">🔐</text>需要牙医身份
+    <button class="btn-primary retry" bindtap="goProfile">去「我的」页绑定工号</button></view></view>
+</block>
+
+<block wx:else>
+  <view class="perf-hero">
+    <view class="perf-month">{{monthText}}业绩</view>
+    <view class="perf-revenue">¥ {{perf.revenueText || '0'}}</view>
+    <view class="perf-name">{{staffInfo.name}} · {{staffInfo.title}}</view>
+  </view>
+
+  <view class="stat card">
+    <view class="stat-item">
+      <view class="stat-num">{{perf.monthDone || 0}}</view>
+      <view class="stat-label">本月完成诊疗</view>
+    </view>
+    <view class="stat-item">
+      <view class="stat-num stat-warn">{{perf.recallCount || 0}}</view>
+      <view class="stat-label">待复诊患者</view>
+    </view>
+    <view class="stat-item">
+      <view class="stat-num">{{perf.todayCount || 0}}</view>
+      <view class="stat-label">今日候诊</view>
+    </view>
+  </view>
+
+  <view class="card perf-note">
+    <view class="perf-note-title">业绩说明</view>
+    <view class="perf-note-line">· 业绩按「完成就诊」时医生录入的本次费用合计统计；</view>
+    <view class="perf-note-line">· 待复诊 = 病历中填写了未来复诊日期的患者数；</view>
+    <view class="perf-note-line">· 数据与患者端病历、缴费单实时一致，可在完成就诊后立即查看变化。</view>
+  </view>
+  <view class="footer-tip">医生业绩统计 · 每次完成就诊自动累计</view>
+</block>

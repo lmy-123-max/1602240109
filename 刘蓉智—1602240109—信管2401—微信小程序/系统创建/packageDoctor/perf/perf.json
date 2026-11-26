@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "我的业绩",
+  "usingComponents": {
+    "login-panel": "../../components/login-panel/login-panel"
+  }
+}

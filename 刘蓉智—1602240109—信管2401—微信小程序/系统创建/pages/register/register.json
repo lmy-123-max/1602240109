@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "注册 / 入驻",
+  "usingComponents": {
+    "login-panel": "../../components/login-panel/login-panel"
+  }
+}

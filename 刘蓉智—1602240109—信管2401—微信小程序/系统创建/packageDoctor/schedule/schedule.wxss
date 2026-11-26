@@ -1,0 +1,15 @@
+/* packageDoctor/schedule/schedule.wxss */
+.sch-card { padding: 24rpx 28rpx; }
+.sch-date { font-size: 28rpx; font-weight: 700; margin-bottom: 14rpx; }
+.sch-week { font-size: 23rpx; color: var(--muted); font-weight: 400; margin-left: 10rpx; }
+.sch-item {
+  display: flex; align-items: center;
+  padding: 16rpx 0; border-top: 1rpx solid var(--line);
+  font-size: 26rpx;
+}
+.sch-item:first-of-type { border-top: none; }
+.sch-slot { width: 260rpx; }
+.sch-quota { color: var(--muted); font-size: 24rpx; }
+.sch-full { color: var(--warn); }
+.sch-item .tag { margin-left: auto; }
+.retry { margin-top: 20rpx; }

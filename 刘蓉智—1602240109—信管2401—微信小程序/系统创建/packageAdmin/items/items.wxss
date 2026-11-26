@@ -1,0 +1,25 @@
+/* packageAdmin/items/items.wxss */
+.i-cat-name { font-size: 28rpx; font-weight: 700; margin-bottom: 8rpx; }
+.i-head {
+  display: flex; font-size: 21rpx; color: var(--muted);
+  padding: 12rpx 0 6rpx; border-bottom: 1rpx solid var(--line);
+}
+.i-h-name { flex: 1; }
+.i-h-price, .i-h-cost { width: 150rpx; text-align: right; }
+.i-row {
+  display: flex; align-items: center;
+  padding: 16rpx 0; border-bottom: 1rpx solid var(--line);
+}
+.i-row:last-child { border-bottom: none; }
+.i-name { flex: 1; min-width: 0; }
+.i-n { font-size: 26rpx; font-weight: 500; }
+.i-code { font-size: 21rpx; color: var(--muted); margin-top: 4rpx; }
+.i-price { width: 150rpx; text-align: right; font-size: 26rpx; font-weight: 700; color: var(--brand); }
+.i-cost { width: 150rpx; text-align: right; font-size: 23rpx; color: var(--muted); }
+.retry { margin-top: 20rpx; }
+
+/* 医保标签 */
+.ins-tag { font-size: 20rpx; border-radius: 6rpx; padding: 2rpx 10rpx; margin-left: 8rpx; vertical-align: middle; }
+.ins-a { background: #e6f7ef; color: #0b7a4b; }
+.ins-b { background: #eef4ff; color: #1a7ce0; }
+.ins-c { background: #f0f2f6; color: #8a94a0; }

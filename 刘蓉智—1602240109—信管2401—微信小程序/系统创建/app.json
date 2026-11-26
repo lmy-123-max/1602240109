@@ -1,0 +1,81 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/booking/booking",
+    "pages/appointments/appointments",
+    "pages/queue/queue",
+    "pages/bills/bills",
+    "pages/records/records",
+    "pages/stores/stores",
+    "pages/register/register",
+    "pages/profile/profile"
+  ],
+  "subPackages": [
+    {
+      "root": "packageDoctor",
+      "pages": [
+        "workbench/workbench",
+        "today/today",
+        "consult/consult",
+        "schedule/schedule",
+        "perf/perf"
+      ]
+    },
+    {
+      "root": "packageAdmin",
+      "pages": [
+        "workbench/workbench",
+        "appointments/appointments",
+        "notices/notices",
+        "doctors/doctors",
+        "items/items",
+        "stores/stores",
+        "staff/staff",
+        "logs/logs"
+      ]
+    }
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#1a7ce0",
+    "navigationBarTitleText": "牙科门诊",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f4f7fb",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#9aa4b2",
+    "selectedColor": "#1a7ce0",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/tab/home.png",
+        "selectedIconPath": "images/tab/home-on.png"
+      },
+      {
+        "pagePath": "pages/booking/booking",
+        "text": "预约",
+        "iconPath": "images/tab/book.png",
+        "selectedIconPath": "images/tab/book-on.png"
+      },
+      {
+        "pagePath": "pages/appointments/appointments",
+        "text": "我的预约",
+        "iconPath": "images/tab/appt.png",
+        "selectedIconPath": "images/tab/appt-on.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "images/tab/me.png",
+        "selectedIconPath": "images/tab/me-on.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "renderer": "webview",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}
